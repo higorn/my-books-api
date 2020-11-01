@@ -1,0 +1,32 @@
+server:
+  servlet:
+    context-path: /
+spring:
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+  liquibase:
+    change-log: classpath:/db/changelog/changelog-master.xml
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://dev-2762279.okta.com/oauth2/default
+          jwk-set-uri: https://dev-2762279.okta.com/oauth2/default/v1/keys
+#          issuer-uri: https://accounts.google.com
+#          jwk-set-uri: https://www.googleapis.com/oauth2/v3/certs
+
+logging:
+  level:
+    liquibase: INFO
+
+springdoc:
+  api-docs:
+    path: /api-src-doc
+  swagger-ui:
+    path: /api-doc
+    oauth:
+#      client-id: 635953397895-hkpkmjro2hrtp3as1k396vi44oqc9kll.apps.googleusercontent.com
+      client-id: 0oahn9znOxaAtBDZk5d5
+      use-pkce-with-authorization-code-grant: true
