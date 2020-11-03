@@ -18,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.ArrayList;
 
@@ -74,15 +75,29 @@ class BookControllerTest {
   }
 
   @Test
+  void whenListOfBooksWithInvalidParams_thenReturnBadRequestStatus() throws Exception {
+    StubJwt stubJwt = new StubJwt();
+    when(jwtDecoder.decode(anyString())).thenReturn(stubJwt.toJwt());
+    when(facade.list(any(), anyInt(), anyInt(), any(), any())).thenThrow(IllegalArgumentException.class);
+
+    mockMvc.perform(get("/v1/books")
+        .header(AUTHORIZATION_HEADER, AUTH_TYPE + stubJwt.getToken()))
+        .andDo(print())
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$").isNotEmpty())
+        .andExpect(jsonPath("$.status", is("BAD_REQUEST")))
+        .andExpect(jsonPath("$.timestamp").isNotEmpty());
+
+    verify(jwtDecoder).decode(anyString());
+    verify(facade).list(any(), anyInt(), anyInt(), any(), any());
+  }
+
+  @Test
   void givenNoBook_whenCreate_thenReturnsBadRequestStatus() throws Exception {
     StubJwt stubJwt = new StubJwt();
     when(jwtDecoder.decode(anyString())).thenReturn(stubJwt.toJwt());
 
-    mockMvc.perform(post("/v1/books")
-          .header(AUTHORIZATION_HEADER, AUTH_TYPE + stubJwt.getToken())
-          .content("")
-          .contentType(MediaType.APPLICATION_JSON))
-        .andDo(print())
+    doPost(stubJwt, "")
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$").isNotEmpty())
         .andExpect(jsonPath("$.status", is("BAD_REQUEST")))
@@ -98,11 +113,7 @@ class BookControllerTest {
     when(jwtDecoder.decode(anyString())).thenReturn(stubJwt.toJwt());
     when(facade.create(any(BookDto.class))).thenThrow(ConversionFailedException.class);
 
-    mockMvc.perform(post("/v1/books")
-          .header(AUTHORIZATION_HEADER, AUTH_TYPE + stubJwt.getToken())
-          .content(getContent())
-          .contentType(MediaType.APPLICATION_JSON))
-        .andDo(print())
+    doPost(stubJwt, getContent())
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$").isNotEmpty())
         .andExpect(jsonPath("$.status", is("BAD_REQUEST")))
@@ -119,11 +130,7 @@ class BookControllerTest {
     when(jwtDecoder.decode(anyString())).thenReturn(stubJwt.toJwt());
     when(facade.create(any(BookDto.class))).thenThrow(new DuplicatedEntryException(message));
 
-    mockMvc.perform(post("/v1/books")
-        .header(AUTHORIZATION_HEADER, AUTH_TYPE + stubJwt.getToken())
-        .content(getContent())
-        .contentType(MediaType.APPLICATION_JSON))
-        .andDo(print())
+    doPost(stubJwt, getContent())
         .andExpect(status().isConflict())
         .andExpect(jsonPath("$").isNotEmpty())
         .andExpect(jsonPath("$.status", is("CONFLICT")))
@@ -132,6 +139,14 @@ class BookControllerTest {
 
     verify(jwtDecoder).decode(anyString());
     verify(facade).create(any(BookDto.class));
+  }
+
+  private ResultActions doPost(StubJwt stubJwt, String content) throws Exception {
+    return mockMvc.perform(
+        post("/v1/books").header(AUTHORIZATION_HEADER, AUTH_TYPE + stubJwt.getToken())
+            .content(content)
+            .contentType(MediaType.APPLICATION_JSON))
+        .andDo(print());
   }
 
   private String getContent() throws JsonProcessingException {

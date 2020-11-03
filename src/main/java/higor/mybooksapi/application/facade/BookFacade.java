@@ -4,12 +4,9 @@ import higor.mybooksapi.application.facade.dto.BookDto;
 import higor.mybooksapi.domain.book.Book;
 import higor.mybooksapi.domain.book.BookRepository;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 
 @Service
 public class BookFacade {
@@ -20,10 +17,19 @@ public class BookFacade {
   }
 
   public Page<BookDto> list(String filter, int page, int size, Sort.Direction direction, String sortBy) {
-    Page<Book> books = repository.findAll(PageRequest.of(0, 10, direction, sortBy));
-//    Page<Book> books = repository.findAll(PageRequest.of(page, size));
-    Page<BookDto> booksDto = new PageImpl<>(new ArrayList<>());
-    return booksDto;
+    return repository.findAll(PageRequest.of(page, size, direction, sortBy)).map(this::mapToDto);
+  }
+
+  private BookDto mapToDto(Book book) {
+    BookDto bookDto = new BookDto();
+    bookDto.id = book.getId();
+    bookDto.title = book.getTitle();
+    bookDto.subtitle = book.getSubtitle();
+    bookDto.author = book.getAuthor();
+    bookDto.publishingCompany = book.getPublishingCompany();
+    bookDto.pages = book.getPages();
+    bookDto.read = book.isRead();
+    return bookDto;
   }
 
   public long create(BookDto bookDto) {

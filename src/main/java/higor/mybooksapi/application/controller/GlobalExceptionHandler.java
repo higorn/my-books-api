@@ -21,7 +21,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     return ResponseEntity.status(status).body(new ErrorDto(status, e.getMessage()));
   }
 
-  @ExceptionHandler({ ConversionFailedException.class })
+  @ExceptionHandler({ ConversionFailedException.class, IllegalArgumentException.class })
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public ResponseEntity<ErrorDto> handleBadRequest(Exception e) {
     return handleExceptionWithContent(e, HttpStatus.BAD_REQUEST);

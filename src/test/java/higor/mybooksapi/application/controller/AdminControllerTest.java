@@ -32,7 +32,7 @@ public class AdminControllerTest {
 
   @Test
   void givenIHaveAdminRights_whenListUsers_thenReturnUsers() throws Exception {
-    StubJwt stubJwt = new StubJwt().groups("Admin");
+    StubJwt stubJwt = new StubJwt().groups("Admin", "User");
     when(jwtDecoder.decode(anyString())).thenReturn(stubJwt.toJwt());
 
     mockMvc.perform(get("/v1/admin/users")

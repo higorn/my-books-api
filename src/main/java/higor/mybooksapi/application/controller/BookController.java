@@ -39,7 +39,7 @@ public class BookController {
       @RequestParam(value = "page", required = false, defaultValue = "0") int page,
       @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
       @RequestParam(value = "direction", required = false, defaultValue = "ASC") Sort.Direction direction,
-      @RequestParam(value = "sortBy", required = false) String sortBy) {
+      @RequestParam(value = "sortBy", required = false, defaultValue = "title") String sortBy) {
     return facade.list(filter, page, pageSize, direction, sortBy);
   }
 

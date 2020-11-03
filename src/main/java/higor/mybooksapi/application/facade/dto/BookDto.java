@@ -6,6 +6,7 @@ import java.util.List;
 
 @Schema(name = "Book")
 public class BookDto {
+  public Integer     id;
   @Schema(example = "Effective Java")
   public String       title;
   @Schema(example = "Programming Language Guide")
