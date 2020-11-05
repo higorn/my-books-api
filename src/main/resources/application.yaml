@@ -2,10 +2,12 @@ server:
   servlet:
     context-path: /
 spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/my-books
+    username: my-books
+    password: secret
   jpa:
     open-in-view: false
-    hibernate:
-      ddl-auto: update
   liquibase:
     change-log: classpath:/db/changelog/changelog-master.xml
   security:

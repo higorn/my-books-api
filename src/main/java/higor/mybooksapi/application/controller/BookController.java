@@ -1,7 +1,7 @@
 package higor.mybooksapi.application.controller;
 
 import higor.mybooksapi.application.facade.BookFacade;
-import higor.mybooksapi.application.facade.dto.BookDto;
+import higor.mybooksapi.application.dto.BookDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

@@ -1,14 +1,16 @@
 package higor.mybooksapi.application.facade;
 
-import higor.mybooksapi.application.facade.dto.BookDto;
+import higor.mybooksapi.application.dto.BookDto;
 import higor.mybooksapi.domain.book.Book;
 import higor.mybooksapi.domain.book.BookRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+import static higor.mybooksapi.application.mapper.BookMapper.toBook;
+
+@Component
 public class BookFacade {
   private final BookRepository repository;
 
@@ -32,7 +34,7 @@ public class BookFacade {
     return bookDto;
   }
 
-  public long create(BookDto bookDto) {
-    return 0;
+  public Integer create(BookDto bookDto) {
+    return repository.save(toBook(bookDto)).getId();
   }
 }

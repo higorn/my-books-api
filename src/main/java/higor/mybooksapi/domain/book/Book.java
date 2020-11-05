@@ -1,11 +1,12 @@
 package higor.mybooksapi.domain.book;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class Book {
   @Id
+  @SequenceGenerator(name = "Book_SEQ", sequenceName = "book_seq", allocationSize = 1)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "Book_SEQ")
   private Integer      id;
   private String       title;
   private String       subtitle;

@@ -3,8 +3,8 @@ package higor.mybooksapi.application.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import higor.mybooksapi.application.config.TestConfig;
+import higor.mybooksapi.application.dto.BookDto;
 import higor.mybooksapi.application.facade.BookFacade;
-import higor.mybooksapi.application.facade.dto.BookDto;
 import higor.mybooksapi.application.utils.StubJwt;
 import higor.mybooksapi.domain.exception.DuplicatedEntryException;
 import org.junit.jupiter.api.Test;
@@ -24,17 +24,15 @@ import java.util.ArrayList;
 
 import static higor.mybooksapi.application.controller.ControllerTestConstants.AUTHORIZATION_HEADER;
 import static higor.mybooksapi.application.controller.ControllerTestConstants.AUTH_TYPE;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(BookController.class)
 @ContextConfiguration(classes = { TestConfig.class })
@@ -136,6 +134,20 @@ class BookControllerTest {
         .andExpect(jsonPath("$.status", is("CONFLICT")))
         .andExpect(jsonPath("$.timestamp").isNotEmpty())
         .andExpect(jsonPath("$.message", is(message)));
+
+    verify(jwtDecoder).decode(anyString());
+    verify(facade).create(any(BookDto.class));
+  }
+
+  @Test
+  void givenABook_whenIsValid_thenCreate_andReturnsCreatedStatus_andReturnsTheLocationHeader() throws Exception {
+    StubJwt stubJwt = new StubJwt();
+    when(jwtDecoder.decode(anyString())).thenReturn(stubJwt.toJwt());
+    when(facade.create(any(BookDto.class))).thenReturn(1);
+
+    doPost(stubJwt, getContent())
+        .andExpect(status().isCreated())
+        .andExpect(header().string("Location", containsString("http://localhost/v1/books")));
 
     verify(jwtDecoder).decode(anyString());
     verify(facade).create(any(BookDto.class));
