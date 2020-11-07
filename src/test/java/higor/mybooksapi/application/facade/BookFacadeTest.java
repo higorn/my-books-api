@@ -41,12 +41,14 @@ class BookFacadeTest {
         "Joshua Bloch", "Addison-Wesley", 252, true));
     books.add(createBook(2, "Effective Java2", "Programming Language Guide2",
         "Joshua Bloch2", "Addison-Wesley2", 152, false));
-    when(repository.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(books));
+    when(repository.findByTitleContainingIgnoreCaseOrSubtitleContainingIgnoreCaseOrAuthorContainingIgnoreCaseOrPublishingCompanyContainingIgnoreCase(
+        any(), any(), any(), any(), any(Pageable.class))).thenReturn(new PageImpl<>(books));
 
     Page<BookDto> booksPage = facade.list(null, 0, 10, Sort.Direction.ASC, "title");
 
     assertBooks(books, booksPage);
-    verify(repository).findAll(any(Pageable.class));
+    verify(repository).findByTitleContainingIgnoreCaseOrSubtitleContainingIgnoreCaseOrAuthorContainingIgnoreCaseOrPublishingCompanyContainingIgnoreCase(
+        any(), any(), any(), any(), any(Pageable.class));
   }
 
   @Test
@@ -58,6 +60,10 @@ class BookFacadeTest {
   void whenCreateAnotherBook_thenReturnsItsId() {
     assertBookCreation(2, false);
   }
+
+  // TODO: get book deatil
+  // TODO: set book as reed
+  // TODO: when book is read increase user points
 
   private void assertBookCreation(int i, boolean read) {
     BookDto bookDto = createBookDto("Effective Java", "Programming Language Guide",

@@ -56,4 +56,6 @@ public class BookController {
   public ResponseEntity<Void> create(@RequestBody BookDto book) throws URISyntaxException {
     return ResponseEntity.created(new URI("http://localhost/v1/books/" + facade.create(book))).build();
   }
+
+  // TODO: get book detail
 }

@@ -21,4 +21,6 @@ class BookRepositoryTest {
     assertNotNull(savedBook.getId());
   }
 
+  // TODO: list books with filter
+
 }

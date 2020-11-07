@@ -27,11 +27,81 @@
       <column name="author" type="varchar(100)"/>
       <column name="publishing_company" type="varchar(100)"/>
       <column name="pages" type="integer"/>
-      <column name="read" type="boolean"/>
+      <column name="read" type="boolean" defaultValue="f"/>
     </createTable>
     <addNotNullConstraint tableName="book" columnName="id"/>
     <addNotNullConstraint tableName="book" columnName="title"/>
     <addNotNullConstraint tableName="book" columnName="author"/>
+    <addNotNullConstraint tableName="book" columnName="publishing_company"/>
+    <addNotNullConstraint tableName="book" columnName="read"/>
     <addPrimaryKey tableName="book" columnNames="id" constraintName="book_pkey"/>
+  </changeSet>
+
+  <changeSet id="3" author="higor">
+    <preConditions onFail="MARK_RAN">
+      <tableIsEmpty tableName="book"/>
+    </preConditions>
+    <insert tableName="book">
+      <column name="id" valueSequenceNext="book_seq"/>
+      <column name="title" value="Design Patterns com Java"/>
+      <column name="subtitle" value="Projeto orientado a objetos guuado por padrões"/>
+      <column name="author" value="Eduardo Guerra"/>
+      <column name="publishing_company" value="Casa do Código"/>
+      <column name="pages" value="274"/>
+    </insert>
+    <insert tableName="book">
+      <column name="id" valueSequenceNext="book_seq"/>
+      <column name="title" value="Reflexão e Anotações"/>
+      <column name="subtitle" value="Componentes reutilizáveis em Java com"/>
+      <column name="author" value="Eduardo Guerra"/>
+      <column name="publishing_company" value="Casa do Código"/>
+      <column name="pages" value="356"/>
+    </insert>
+    <insert tableName="book">
+      <column name="id" valueSequenceNext="book_seq"/>
+      <column name="title" value="Introduction to Neural Networks for Java"/>
+      <column name="subtitle" value="An artificial neural networks aproach"/>
+      <column name="author" value="Jeff Heaton"/>
+      <column name="publishing_company" value="Heaton Research"/>
+      <column name="pages" value="439"/>
+    </insert>
+    <insert tableName="book">
+      <column name="id" valueSequenceNext="book_seq"/>
+      <column name="title" value="Java 8 in Action"/>
+      <column name="subtitle" value="Lambdas, streams, and functional-style programming"/>
+      <column name="author" value="Raoul Gabriel Urma, Mario Fusco, Alan Mycroft"/>
+      <column name="publishing_company" value="Manning"/>
+      <column name="pages" value="479"/>
+    </insert>
+    <insert tableName="book">
+      <column name="id" valueSequenceNext="book_seq"/>
+      <column name="title" value="JSF e JPA"/>
+      <column name="subtitle" value="Aplicações Java para web com"/>
+      <column name="author" value="Gilliard Cordeiro"/>
+      <column name="publishing_company" value="Casa do Código"/>
+      <column name="pages" value="221"/>
+    </insert>
+    <insert tableName="book">
+      <column name="id" valueSequenceNext="book_seq"/>
+      <column name="title" value="As Conexões Ocultas"/>
+      <column name="subtitle" value="Ciência para uma vida sustentável"/>
+      <column name="author" value="Fritjof Capra"/>
+      <column name="publishing_company" value="Cultrix"/>
+      <column name="pages" value="296"/>
+    </insert>
+    <insert tableName="book">
+      <column name="id" valueSequenceNext="book_seq"/>
+      <column name="title" value="Inferno"/>
+      <column name="author" value="Dan Brown"/>
+      <column name="publishing_company" value="Arqueiro"/>
+      <column name="pages" value="448"/>
+    </insert>
+    <insert tableName="book">
+      <column name="id" valueSequenceNext="book_seq"/>
+      <column name="title" value="O Pequeno Príncipe"/>
+      <column name="author" value="Antoine de Saint-Exupéry"/>
+      <column name="publishing_company" value="Reynal and Hitchcock, Gallimard"/>
+      <column name="pages" value="94"/>
+    </insert>
   </changeSet>
 </databaseChangeLog>

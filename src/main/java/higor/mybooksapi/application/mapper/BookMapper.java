@@ -17,4 +17,16 @@ public class BookMapper {
     book.setRead(bookDto.read);
     return book;
   }
+
+  public static BookDto toBookDto(Book book) {
+    BookDto bookDto = new BookDto();
+    bookDto.id = book.getId();
+    bookDto.title = book.getTitle();
+    bookDto.subtitle = book.getSubtitle();
+    bookDto.author = book.getAuthor();
+    bookDto.publishingCompany = book.getPublishingCompany();
+    bookDto.pages = book.getPages();
+    bookDto.read = book.isRead();
+    return bookDto;
+  }
 }
