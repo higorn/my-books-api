@@ -3,6 +3,7 @@ package higor.mybooksapi.application.facade;
 import higor.mybooksapi.application.dto.BookDto;
 import higor.mybooksapi.application.mapper.BookMapper;
 import higor.mybooksapi.domain.book.BookRepository;
+import higor.mybooksapi.domain.user.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -28,5 +29,9 @@ public class BookFacade {
 
   public Integer create(BookDto bookDto) {
     return repository.save(toBook(bookDto)).getId();
+  }
+
+  public Integer create(BookDto bookDto, User user) {
+    return null;
   }
 }

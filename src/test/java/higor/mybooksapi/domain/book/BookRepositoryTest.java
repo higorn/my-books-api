@@ -20,7 +20,4 @@ class BookRepositoryTest {
     Book savedBook = repository.save(book);
     assertNotNull(savedBook.getId());
   }
-
-  // TODO: list books with filter
-
 }

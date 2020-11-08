@@ -84,6 +84,7 @@ class BookFacadeTest {
       return b;
     }).when(repository).save(any(Book.class));
 
+    // TODO: exchange to the create with user
     long bookId = facade.create(bookDto);
 
     assertEquals(i, bookId);

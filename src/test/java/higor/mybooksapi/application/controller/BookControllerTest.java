@@ -5,8 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import higor.mybooksapi.application.config.TestConfig;
 import higor.mybooksapi.application.dto.BookDto;
 import higor.mybooksapi.application.facade.BookFacade;
+import higor.mybooksapi.application.facade.UserFacade;
 import higor.mybooksapi.application.utils.StubJwt;
 import higor.mybooksapi.domain.exception.DuplicatedEntryException;
+import higor.mybooksapi.domain.user.User;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -20,15 +24,17 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 
 import static higor.mybooksapi.application.controller.ControllerTestConstants.AUTHORIZATION_HEADER;
 import static higor.mybooksapi.application.controller.ControllerTestConstants.AUTH_TYPE;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -42,59 +48,77 @@ class BookControllerTest {
   private MockMvc    mockMvc;
   @Autowired
   private ObjectMapper mapper;
-  @MockBean
+  @Autowired
   private JwtDecoder jwtDecoder;
   @MockBean
   private BookFacade facade;
+  @MockBean
+  private UserFacade userFacade;
+  private User stubUser;
+  private String userEmailFromToken;
+  private StubJwt stubJwt;
+
+  @BeforeEach
+  void setUp() throws ParseException {
+    stubJwt = new StubJwt();
+    when(jwtDecoder.decode(anyString())).thenReturn(stubJwt.toJwt());
+    userEmailFromToken = (String) stubJwt.toJwt().getClaims().get("sub");
+
+    stubUser = new User();
+    stubUser.setId(1);
+    stubUser.setEmail("nicanor@email.com");
+    when(userFacade.getUserByEmail(userEmailFromToken)).thenReturn(stubUser);
+  }
+
+  @AfterEach
+  void tearDown() {
+    reset(jwtDecoder);
+  }
 
   @Test
-  void givenANotAuthenticatedRequest_thenReturnsUnauthorizedStatus() throws Exception {
-    mockMvc.perform(get("/v1/books"))
+  void whenCreateABookWithoutAuthentication_thenReturnsUnauthorizedStatus() throws Exception {
+    mockMvc.perform(post("/v1/books").with(csrf())) // post without authentication must have csrf
         .andDo(print())
         .andExpect(status().isUnauthorized());
   }
 
   @Test
+  void whenCreateABookWithoutAuthentication_andWithoutCsrf_thenReturnsForbiddenStatus() throws Exception {
+    mockMvc.perform(post("/v1/books")) // post without authentication must have csrf
+        .andDo(print())
+        .andExpect(status().isForbidden());
+  }
+
+  @Test
   void givenThatThereAreNoBooks_whenListBooks_thenReturnEmptyList() throws Exception {
     Page<BookDto> books = new PageImpl<>(new ArrayList<>());
-    StubJwt stubJwt = new StubJwt();
-    when(jwtDecoder.decode(anyString())).thenReturn(stubJwt.toJwt());
     when(facade.list(any(), anyInt(), anyInt(), any(), any())).thenReturn(books);
 
-    mockMvc.perform(get("/v1/books")
-        .header(AUTHORIZATION_HEADER, AUTH_TYPE + stubJwt.getToken()))
+    mockMvc.perform(get("/v1/books"))
         .andDo(print())
         .andExpect(status().isOk())
         .andExpect(jsonPath("$").isNotEmpty())
         .andExpect(jsonPath("$.content", hasSize(0)));
 
-    verify(jwtDecoder).decode(anyString());
     verify(facade).list(any(), anyInt(), anyInt(), any(), any());
   }
 
   @Test
   void whenListOfBooksWithInvalidParams_thenReturnBadRequestStatus() throws Exception {
-    StubJwt stubJwt = new StubJwt();
-    when(jwtDecoder.decode(anyString())).thenReturn(stubJwt.toJwt());
     when(facade.list(any(), anyInt(), anyInt(), any(), any())).thenThrow(IllegalArgumentException.class);
 
-    mockMvc.perform(get("/v1/books")
-        .header(AUTHORIZATION_HEADER, AUTH_TYPE + stubJwt.getToken()))
+    mockMvc.perform(get("/v1/books"))
         .andDo(print())
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$").isNotEmpty())
         .andExpect(jsonPath("$.status", is("BAD_REQUEST")))
         .andExpect(jsonPath("$.timestamp").isNotEmpty());
 
-    verify(jwtDecoder).decode(anyString());
     verify(facade).list(any(), anyInt(), anyInt(), any(), any());
   }
 
   @Test
   void givenNoBook_whenCreate_thenReturnsBadRequestStatus() throws Exception {
-    StubJwt stubJwt = new StubJwt();
-    when(jwtDecoder.decode(anyString())).thenReturn(stubJwt.toJwt());
-
     doPost(stubJwt, "")
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$").isNotEmpty())
@@ -107,9 +131,7 @@ class BookControllerTest {
 
   @Test
   void givenABook_whenCreate_andConversionFails_thenReturnsBadRequestStatus() throws Exception {
-    StubJwt stubJwt = new StubJwt();
-    when(jwtDecoder.decode(anyString())).thenReturn(stubJwt.toJwt());
-    when(facade.create(any(BookDto.class))).thenThrow(ConversionFailedException.class);
+    when(facade.create(any(BookDto.class), any(User.class))).thenThrow(ConversionFailedException.class);
 
     doPost(stubJwt, getContent())
         .andExpect(status().isBadRequest())
@@ -118,15 +140,13 @@ class BookControllerTest {
         .andExpect(jsonPath("$.timestamp").isNotEmpty());
 
     verify(jwtDecoder).decode(anyString());
-    verify(facade).create(any(BookDto.class));
+    verify(facade).create(any(BookDto.class), any(User.class));
   }
 
   @Test
   void givenABook_whenItIsADuplicatedEntry_thenReturnsConflictStatus() throws Exception {
     String message = "Duplicate entry";
-    StubJwt stubJwt = new StubJwt();
-    when(jwtDecoder.decode(anyString())).thenReturn(stubJwt.toJwt());
-    when(facade.create(any(BookDto.class))).thenThrow(new DuplicatedEntryException(message));
+    when(facade.create(any(BookDto.class), any(User.class))).thenThrow(new DuplicatedEntryException(message));
 
     doPost(stubJwt, getContent())
         .andExpect(status().isConflict())
@@ -136,21 +156,25 @@ class BookControllerTest {
         .andExpect(jsonPath("$.message", is(message)));
 
     verify(jwtDecoder).decode(anyString());
-    verify(facade).create(any(BookDto.class));
+    verify(facade).create(any(BookDto.class), any(User.class));
   }
 
   @Test
   void givenABook_whenIsValid_thenCreate_andReturnsCreatedStatus_andReturnsTheLocationHeader() throws Exception {
-    StubJwt stubJwt = new StubJwt();
-    when(jwtDecoder.decode(anyString())).thenReturn(stubJwt.toJwt());
-    when(facade.create(any(BookDto.class))).thenReturn(1);
+    doAnswer(invocation -> {
+      User u = invocation.getArgument(1, User.class);
+      assertEquals(stubUser.getId(), u.getId());
+      assertEquals(stubUser.getEmail(), u.getEmail());
+      return 1;
+    }).when(facade).create(any(BookDto.class), any(User.class));
 
     doPost(stubJwt, getContent())
         .andExpect(status().isCreated())
         .andExpect(header().string("Location", containsString("http://localhost/v1/books")));
 
     verify(jwtDecoder).decode(anyString());
-    verify(facade).create(any(BookDto.class));
+    verify(userFacade).getUserByEmail(userEmailFromToken);
+    verify(facade).create(any(BookDto.class), any(User.class));
   }
 
   private ResultActions doPost(StubJwt stubJwt, String content) throws Exception {

@@ -27,7 +27,7 @@ public class StubJwt {
     claims.put("aud", "api://default");
     claims.put("cid", "abd");
     claims.put("uid", "abc");
-    claims.put("sub", "user@test.com");
+    claims.put("sub", "nicanor@email.com");
   }
 
   public StubJwt groups(String... groups) {

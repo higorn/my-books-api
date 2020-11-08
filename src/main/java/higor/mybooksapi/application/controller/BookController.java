@@ -1,11 +1,13 @@
 package higor.mybooksapi.application.controller;
 
-import higor.mybooksapi.application.facade.BookFacade;
 import higor.mybooksapi.application.dto.BookDto;
+import higor.mybooksapi.application.facade.BookFacade;
+import higor.mybooksapi.application.facade.UserFacade;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/v1")
@@ -21,9 +24,11 @@ import java.net.URISyntaxException;
 public class BookController {
 
   private final BookFacade facade;
+  private final UserFacade userFacade;
 
-  public BookController(BookFacade facade) {
+  public BookController(BookFacade facade, UserFacade userFacade) {
     this.facade = facade;
+    this.userFacade = userFacade;
   }
 
   @Operation(summary = "Find books", tags = "Books")
@@ -34,6 +39,7 @@ public class BookController {
       @ApiResponse(responseCode = "415", ref = "#/components/responses/415"),
       @ApiResponse(responseCode = "500", ref = "#/components/responses/500")
   })
+  @SecurityRequirements
   @GetMapping("/books")
   public Page<BookDto> list(@RequestParam(name = "filter", required = false) String filter,
       @RequestParam(value = "page", required = false, defaultValue = "0") int page,
@@ -53,8 +59,9 @@ public class BookController {
       @ApiResponse(responseCode = "500", ref = "#/components/responses/500")
   })
   @PostMapping("/books")
-  public ResponseEntity<Void> create(@RequestBody BookDto book) throws URISyntaxException {
-    return ResponseEntity.created(new URI("http://localhost/v1/books/" + facade.create(book))).build();
+  public ResponseEntity<Void> create(@RequestBody BookDto book, Principal principal) throws URISyntaxException {
+    return ResponseEntity.created(new URI("http://localhost/v1/books/"
+        + facade.create(book, userFacade.getUserByEmail(principal.getName())))).build();
   }
 
   // TODO: get book detail
