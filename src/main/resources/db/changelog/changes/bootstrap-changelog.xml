@@ -27,17 +27,78 @@
       <column name="author" type="varchar(100)"/>
       <column name="publishing_company" type="varchar(100)"/>
       <column name="pages" type="integer"/>
-      <column name="read" type="boolean" defaultValue="f"/>
     </createTable>
     <addNotNullConstraint tableName="book" columnName="id"/>
     <addNotNullConstraint tableName="book" columnName="title"/>
     <addNotNullConstraint tableName="book" columnName="author"/>
     <addNotNullConstraint tableName="book" columnName="publishing_company"/>
-    <addNotNullConstraint tableName="book" columnName="read"/>
     <addPrimaryKey tableName="book" columnNames="id" constraintName="book_pkey"/>
   </changeSet>
 
   <changeSet id="3" author="higor">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <sequenceExists sequenceName="account_seq"/>
+      </not>
+    </preConditions>
+    <createSequence sequenceName="account_seq" incrementBy="1"/>
+  </changeSet>
+
+  <changeSet id="4" author="higor">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <tableExists tableName="account"/>
+      </not>
+    </preConditions>
+
+    <createTable tableName="account">
+      <column name="id" type="integer"/>
+      <column name="name" type="varchar(50)"/>
+      <column name="surname" type="varchar(50)"/>
+      <column name="email" type="varchar(100)"/>
+    </createTable>
+    <addNotNullConstraint tableName="account" columnName="id"/>
+    <addNotNullConstraint tableName="account" columnName="email"/>
+    <addUniqueConstraint tableName="account" columnNames="email"/>
+    <addPrimaryKey tableName="account" columnNames="id" constraintName="account_pkey"/>
+  </changeSet>
+
+  <changeSet id="5" author="higor">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <sequenceExists sequenceName="account_book_seq"/>
+      </not>
+    </preConditions>
+    <createSequence sequenceName="account_book_seq" incrementBy="1"/>
+  </changeSet>
+
+  <changeSet id="6" author="higor">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <tableExists tableName="account_book"/>
+      </not>
+    </preConditions>
+
+    <createTable tableName="account_book">
+      <column name="id" type="integer"/>
+      <column name="account_id" type="integer"/>
+      <column name="book_id" type="integer"/>
+      <column name="is_read" type="boolean"/>
+    </createTable>
+    <addNotNullConstraint tableName="account_book" columnName="id"/>
+    <addNotNullConstraint tableName="account_book" columnName="account_id"/>
+    <addNotNullConstraint tableName="account_book" columnName="book_id"/>
+    <addUniqueConstraint tableName="account_book" columnNames="account_id, book_id"/>
+    <addPrimaryKey tableName="account_book" columnNames="id" constraintName="account_book_pkey"/>
+    <addForeignKeyConstraint baseTableName="account_book" baseColumnNames="account_id" constraintName="account_book_account_fk"
+                             referencedTableName="account"
+                             referencedColumnNames="id"/>
+    <addForeignKeyConstraint baseTableName="account_book" baseColumnNames="book_id" constraintName="account_book_book_fk"
+                             referencedTableName="book"
+                             referencedColumnNames="id"/>
+  </changeSet>
+
+  <changeSet id="7" author="higor">
     <preConditions onFail="MARK_RAN">
       <tableIsEmpty tableName="book"/>
     </preConditions>

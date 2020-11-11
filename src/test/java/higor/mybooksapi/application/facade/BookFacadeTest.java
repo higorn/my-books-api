@@ -3,6 +3,9 @@ package higor.mybooksapi.application.facade;
 import higor.mybooksapi.application.dto.BookDto;
 import higor.mybooksapi.domain.book.Book;
 import higor.mybooksapi.domain.book.BookRepository;
+import higor.mybooksapi.domain.user.User;
+import higor.mybooksapi.domain.userbook.UserBook;
+import higor.mybooksapi.domain.userbook.UserBookRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,13 +28,15 @@ import static org.mockito.Mockito.*;
 class BookFacadeTest {
 
   @Mock
-  private BookRepository repository;
+  private BookRepository     bookRepository;
+  @Mock
+  private UserBookRepository userBookRepository;
 
   private BookFacade facade;
 
   @BeforeEach
   void setUp() {
-    facade = new BookFacade(repository);
+    facade = new BookFacade(bookRepository, userBookRepository);
   }
 
   @Test
@@ -41,13 +46,13 @@ class BookFacadeTest {
         "Joshua Bloch", "Addison-Wesley", 252, true));
     books.add(createBook(2, "Effective Java2", "Programming Language Guide2",
         "Joshua Bloch2", "Addison-Wesley2", 152, false));
-    when(repository.findByTitleContainingIgnoreCaseOrSubtitleContainingIgnoreCaseOrAuthorContainingIgnoreCaseOrPublishingCompanyContainingIgnoreCase(
+    when(bookRepository.findByTitleContainingIgnoreCaseOrSubtitleContainingIgnoreCaseOrAuthorContainingIgnoreCaseOrPublishingCompanyContainingIgnoreCase(
         any(), any(), any(), any(), any(Pageable.class))).thenReturn(new PageImpl<>(books));
 
     Page<BookDto> booksPage = facade.list(null, 0, 10, Sort.Direction.ASC, "title");
 
     assertBooks(books, booksPage);
-    verify(repository).findByTitleContainingIgnoreCaseOrSubtitleContainingIgnoreCaseOrAuthorContainingIgnoreCaseOrPublishingCompanyContainingIgnoreCase(
+    verify(bookRepository).findByTitleContainingIgnoreCaseOrSubtitleContainingIgnoreCaseOrAuthorContainingIgnoreCaseOrPublishingCompanyContainingIgnoreCase(
         any(), any(), any(), any(), any(Pageable.class));
   }
 
@@ -66,29 +71,41 @@ class BookFacadeTest {
   // TODO: when book is read increase user points
 
   private void assertBookCreation(int i, boolean read) {
+    // Given
     BookDto bookDto = createBookDto("Effective Java", "Programming Language Guide",
         "Joshua Bloch", "Addison-Wesley", 252, read);
-    Book book = toBook(bookDto);
-    doAnswer(invocation -> {
-      Book b = invocation.getArgument(0, Book.class);
-      b.setId(i);
-      assertEquals(book.getTitle(), b.getTitle());
-      assertNotNull(b.getSubtitle());
-      assertEquals(book.getSubtitle(), b.getSubtitle());
-      assertEquals(book.getAuthor(), b.getAuthor());
-      assertNotNull(b.getPublishingCompany());
-      assertEquals(book.getPublishingCompany(), b.getPublishingCompany());
-      assertNotNull(b.getPages());
-      assertEquals(book.getPages(), b.getPages());
-      assertEquals(read, b.isRead());
-      return b;
-    }).when(repository).save(any(Book.class));
+    doAnswer(invocation -> getExpectedBook(i, bookDto, invocation.getArgument(0, Book.class)))
+        .when(bookRepository).save(any(Book.class));
+    doAnswer(invocation -> getExpectedUserBook(invocation.getArgument(0, UserBook.class), read))
+        .when(userBookRepository).save(any(UserBook.class));
 
-    // TODO: exchange to the create with user
-    long bookId = facade.create(bookDto);
+    long bookId = facade.create(bookDto, new User());
 
     assertEquals(i, bookId);
-    verify(repository).save(any(Book.class));
+    verify(bookRepository).save(any(Book.class));
+    verify(userBookRepository).save(any(UserBook.class));
+  }
+
+  private UserBook getExpectedUserBook(UserBook userBook, boolean read) {
+    assertNull(userBook.getId());
+    assertNotNull(userBook.getUser());
+    assertNotNull(userBook.getBook());
+    assertEquals(read, userBook.isRead());
+    return userBook;
+  }
+
+  private Book getExpectedBook(int i, BookDto bookDto, Book b) {
+    Book expectedBook = toBook(bookDto);
+    b.setId(i);
+    assertEquals(expectedBook.getTitle(), b.getTitle());
+    assertNotNull(b.getSubtitle());
+    assertEquals(expectedBook.getSubtitle(), b.getSubtitle());
+    assertEquals(expectedBook.getAuthor(), b.getAuthor());
+    assertNotNull(b.getPublishingCompany());
+    assertEquals(expectedBook.getPublishingCompany(), b.getPublishingCompany());
+    assertNotNull(b.getPages());
+    assertEquals(expectedBook.getPages(), b.getPages());
+    return b;
   }
 
   private void assertBooks(List<Book> books, Page<BookDto> booksPage) {
@@ -103,7 +120,6 @@ class BookFacadeTest {
       assertEquals(book.getAuthor(), bookDto.author);
       assertEquals(book.getPublishingCompany(), bookDto.publishingCompany);
       assertEquals(book.getPages(), bookDto.pages);
-      assertEquals(book.isRead(), bookDto.read);
     }
   }
 
@@ -116,7 +132,6 @@ class BookFacadeTest {
     book.setAuthor(author);
     book.setPublishingCompany(publishingCompany);
     book.setPages(pages);
-    book.setRead(read);
     return book;
   }
 

@@ -1,4 +1,4 @@
-package higor.mybooksapi.application.controller;
+package higor.mybooksapi.adapter.api.controller;
 
 import higor.mybooksapi.application.config.TestConfig;
 import higor.mybooksapi.application.utils.StubJwt;

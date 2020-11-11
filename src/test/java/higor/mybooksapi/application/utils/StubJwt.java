@@ -20,6 +20,10 @@ public class StubJwt {
 
 
   public StubJwt() {
+    this("nicanor@email.com");
+  }
+
+  public StubJwt(String sub) {
     header = new HashMap<>();
     header.put("typ", "JWT");
     claims = new HashMap<>();
@@ -27,7 +31,7 @@ public class StubJwt {
     claims.put("aud", "api://default");
     claims.put("cid", "abd");
     claims.put("uid", "abc");
-    claims.put("sub", "nicanor@email.com");
+    claims.put("sub", sub);
   }
 
   public StubJwt groups(String... groups) {

@@ -1,9 +1,10 @@
-package higor.mybooksapi.application.it.listbooks;
+package higor.mybooksapi.it.listbooks;
 
 import higor.mybooksapi.application.dto.BookDto;
 import higor.mybooksapi.application.facade.BookFacade;
 import higor.mybooksapi.domain.book.Book;
 import higor.mybooksapi.domain.book.BookRepository;
+import higor.mybooksapi.domain.userbook.UserBookRepository;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
@@ -24,12 +25,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ListBooksSteps {
 
   @Autowired
-  private BookRepository repository;
+  private BookRepository     bookRepository;
+  @Autowired
+  private UserBookRepository userBookRepository;
   private Page<BookDto> booksPage;
 
   @Before
   public void setUp() {
-    repository.deleteAll();
+    bookRepository.deleteAll();
   }
 
   @After
@@ -45,13 +48,13 @@ public class ListBooksSteps {
       book.setSubtitle(row.get("subtitle"));
       book.setAuthor(row.get("author"));
       book.setPublishingCompany(row.get("publishingCompany"));
-      repository.save(book);
+      bookRepository.save(book);
     });
   }
 
   @When("I asks for the book list with filter {string}")
   public void i_asks_for_the_book_list_with_filter(String filter) {
-    BookFacade bookFacade = new BookFacade(repository);
+    BookFacade bookFacade = new BookFacade(bookRepository, userBookRepository);
     booksPage = bookFacade.list("null".equals(filter) ? null : filter, 0, 10, Sort.Direction.ASC, "title");
   }
 

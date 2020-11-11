@@ -14,8 +14,13 @@ public class BookMapper {
     book.setAuthor(bookDto.author);
     book.setPublishingCompany(bookDto.publishingCompany);
     book.setPages(bookDto.pages);
-    book.setRead(bookDto.read);
     return book;
+  }
+
+  public static BookDto toBookDto(Book book, boolean isRead) {
+    BookDto bookDto = toBookDto(book);
+    bookDto.read = isRead;
+    return bookDto;
   }
 
   public static BookDto toBookDto(Book book) {
@@ -26,7 +31,6 @@ public class BookMapper {
     bookDto.author = book.getAuthor();
     bookDto.publishingCompany = book.getPublishingCompany();
     bookDto.pages = book.getPages();
-    bookDto.read = book.isRead();
     return bookDto;
   }
 }

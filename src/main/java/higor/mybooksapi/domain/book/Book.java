@@ -13,7 +13,6 @@ public class Book {
   private String       author;
   private String       publishingCompany;
   private Integer      pages;
-  private boolean      read;
 
   public Integer getId() {
     return id;
@@ -61,13 +60,5 @@ public class Book {
 
   public void setPages(Integer pages) {
     this.pages = pages;
-  }
-
-  public boolean isRead() {
-    return read;
-  }
-
-  public void setRead(boolean read) {
-    this.read = read;
   }
 }

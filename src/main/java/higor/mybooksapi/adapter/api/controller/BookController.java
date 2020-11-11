@@ -1,4 +1,4 @@
-package higor.mybooksapi.application.controller;
+package higor.mybooksapi.adapter.api.controller;
 
 import higor.mybooksapi.application.dto.BookDto;
 import higor.mybooksapi.application.facade.BookFacade;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.security.Principal;
 
 @RestController
 @RequestMapping("/v1")
@@ -39,7 +38,7 @@ public class BookController {
       @ApiResponse(responseCode = "415", ref = "#/components/responses/415"),
       @ApiResponse(responseCode = "500", ref = "#/components/responses/500")
   })
-  @SecurityRequirements
+  @SecurityRequirements // Shows as public resource in the api-doc. Does not require authentication
   @GetMapping("/books")
   public Page<BookDto> list(@RequestParam(name = "filter", required = false) String filter,
       @RequestParam(value = "page", required = false, defaultValue = "0") int page,
@@ -59,9 +58,9 @@ public class BookController {
       @ApiResponse(responseCode = "500", ref = "#/components/responses/500")
   })
   @PostMapping("/books")
-  public ResponseEntity<Void> create(@RequestBody BookDto book, Principal principal) throws URISyntaxException {
+  public ResponseEntity<Void> create(@RequestBody BookDto book) throws URISyntaxException {
     return ResponseEntity.created(new URI("http://localhost/v1/books/"
-        + facade.create(book, userFacade.getUserByEmail(principal.getName())))).build();
+        + facade.create(book, userFacade.getUser().get()))).build();
   }
 
   // TODO: get book detail

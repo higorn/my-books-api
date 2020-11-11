@@ -1,4 +1,4 @@
-package higor.mybooksapi.application.controller;
+package higor.mybooksapi.adapter.api.controller;
 
 import higor.mybooksapi.application.dto.UserDto;
 import io.swagger.v3.oas.annotations.Operation;

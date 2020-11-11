@@ -1,8 +1,8 @@
 package higor.mybooksapi.application;
 
 import higor.mybooksapi.application.dto.ErrorDto;
+import higor.mybooksapi.application.facade.UserFacade;
 import higor.mybooksapi.domain.exception.DuplicatedEntryException;
-import javassist.NotFoundException;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -27,7 +27,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     return handleExceptionWithContent(e, HttpStatus.BAD_REQUEST);
   }
 
-  @ExceptionHandler({ NotFoundException.class })
+  @ExceptionHandler({ UserFacade.UserNotFoundException.class })
   public ResponseEntity<Object> handleNotFound(Exception e) {
     return ResponseEntity.notFound().build();
   }

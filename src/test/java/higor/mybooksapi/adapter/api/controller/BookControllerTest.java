@@ -1,4 +1,4 @@
-package higor.mybooksapi.application.controller;
+package higor.mybooksapi.adapter.api.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,6 +29,7 @@ import java.util.ArrayList;
 
 import static higor.mybooksapi.application.controller.ControllerTestConstants.AUTHORIZATION_HEADER;
 import static higor.mybooksapi.application.controller.ControllerTestConstants.AUTH_TYPE;
+import static java.util.Optional.of;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -55,19 +56,17 @@ class BookControllerTest {
   @MockBean
   private UserFacade userFacade;
   private User stubUser;
-  private String userEmailFromToken;
   private StubJwt stubJwt;
 
   @BeforeEach
   void setUp() throws ParseException {
-    stubJwt = new StubJwt();
+    stubJwt = new StubJwt("nicanor@email.com");
     when(jwtDecoder.decode(anyString())).thenReturn(stubJwt.toJwt());
-    userEmailFromToken = (String) stubJwt.toJwt().getClaims().get("sub");
 
     stubUser = new User();
     stubUser.setId(1);
-    stubUser.setEmail("nicanor@email.com");
-    when(userFacade.getUserByEmail(userEmailFromToken)).thenReturn(stubUser);
+    stubUser.setEmail((String) stubJwt.toJwt().getClaims().get("sub"));
+    when(userFacade.getUser()).thenReturn(of(stubUser));
   }
 
   @AfterEach
@@ -173,7 +172,7 @@ class BookControllerTest {
         .andExpect(header().string("Location", containsString("http://localhost/v1/books")));
 
     verify(jwtDecoder).decode(anyString());
-    verify(userFacade).getUserByEmail(userEmailFromToken);
+    verify(userFacade).getUser();
     verify(facade).create(any(BookDto.class), any(User.class));
   }
 

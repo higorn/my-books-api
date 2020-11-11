@@ -1,4 +1,4 @@
-package higor.mybooksapi.application.it.listbooks;
+package higor.mybooksapi.it.listbooks;
 
 import io.cucumber.junit.Cucumber;
 import io.cucumber.junit.CucumberOptions;
