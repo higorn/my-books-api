@@ -1,6 +1,6 @@
 package higor.mybooksapi.application;
 
-import higor.mybooksapi.application.dto.ErrorDto;
+import higor.mybooksapi.api.dto.ErrorDto;
 import higor.mybooksapi.application.facade.UserFacade;
 import higor.mybooksapi.domain.exception.DuplicatedEntryException;
 import org.springframework.core.convert.ConversionFailedException;

@@ -1,4 +1,4 @@
-package higor.mybooksapi.application.dto;
+package higor.mybooksapi.api.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

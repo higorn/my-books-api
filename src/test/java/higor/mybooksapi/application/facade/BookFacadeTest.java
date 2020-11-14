@@ -1,6 +1,6 @@
 package higor.mybooksapi.application.facade;
 
-import higor.mybooksapi.application.dto.BookDto;
+import higor.mybooksapi.api.dto.BookDto;
 import higor.mybooksapi.domain.book.Book;
 import higor.mybooksapi.domain.book.BookRepository;
 import higor.mybooksapi.domain.user.User;

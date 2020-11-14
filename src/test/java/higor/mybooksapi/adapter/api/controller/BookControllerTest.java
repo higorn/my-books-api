@@ -2,8 +2,9 @@ package higor.mybooksapi.adapter.api.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import higor.mybooksapi.api.controller.BookController;
 import higor.mybooksapi.application.config.TestConfig;
-import higor.mybooksapi.application.dto.BookDto;
+import higor.mybooksapi.api.dto.BookDto;
 import higor.mybooksapi.application.facade.BookFacade;
 import higor.mybooksapi.application.facade.UserFacade;
 import higor.mybooksapi.application.utils.StubJwt;

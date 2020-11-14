@@ -1,5 +1,6 @@
 package higor.mybooksapi.adapter.api.controller;
 
+import higor.mybooksapi.api.controller.AdminController;
 import higor.mybooksapi.application.config.TestConfig;
 import higor.mybooksapi.application.utils.StubJwt;
 import org.junit.jupiter.api.Test;
