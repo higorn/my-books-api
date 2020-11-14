@@ -1,4 +1,4 @@
-package higor.mybooksapi.application.controller;
+package higor.mybooksapi.api.controller;
 
 public class ControllerTestConstants {
   public static final String AUTHORIZATION_HEADER = "Authorization";

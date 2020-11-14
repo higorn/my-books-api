@@ -1,6 +1,5 @@
-package higor.mybooksapi.adapter.api.controller;
+package higor.mybooksapi.api.controller;
 
-import higor.mybooksapi.api.controller.AdminController;
 import higor.mybooksapi.application.config.TestConfig;
 import higor.mybooksapi.application.utils.StubJwt;
 import org.junit.jupiter.api.Test;
@@ -11,8 +10,6 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static higor.mybooksapi.application.controller.ControllerTestConstants.AUTHORIZATION_HEADER;
-import static higor.mybooksapi.application.controller.ControllerTestConstants.AUTH_TYPE;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
@@ -37,7 +34,7 @@ public class AdminControllerTest {
     when(jwtDecoder.decode(anyString())).thenReturn(stubJwt.toJwt());
 
     mockMvc.perform(get("/v1/admin/users")
-          .header(AUTHORIZATION_HEADER, AUTH_TYPE + stubJwt.getToken()))
+          .header(ControllerTestConstants.AUTHORIZATION_HEADER, ControllerTestConstants.AUTH_TYPE + stubJwt.getToken()))
         .andDo(print())
         .andExpect(status().isOk())
         .andExpect(jsonPath("$").isNotEmpty())

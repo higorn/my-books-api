@@ -1,4 +1,4 @@
-package higor.mybooksapi.adapter.api.controller;
+package higor.mybooksapi.api.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,8 +28,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import java.text.ParseException;
 import java.util.ArrayList;
 
-import static higor.mybooksapi.application.controller.ControllerTestConstants.AUTHORIZATION_HEADER;
-import static higor.mybooksapi.application.controller.ControllerTestConstants.AUTH_TYPE;
 import static java.util.Optional.of;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -179,7 +177,7 @@ class BookControllerTest {
 
   private ResultActions doPost(StubJwt stubJwt, String content) throws Exception {
     return mockMvc.perform(
-        post("/v1/books").header(AUTHORIZATION_HEADER, AUTH_TYPE + stubJwt.getToken())
+        post("/v1/books").header(ControllerTestConstants.AUTHORIZATION_HEADER, ControllerTestConstants.AUTH_TYPE + stubJwt.getToken())
             .content(content)
             .contentType(MediaType.APPLICATION_JSON))
         .andDo(print());
