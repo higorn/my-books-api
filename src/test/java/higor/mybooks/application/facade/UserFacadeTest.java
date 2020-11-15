@@ -1,5 +1,6 @@
 package higor.mybooks.application.facade;
 
+import higor.mybooks.application.facade.UserFacade;
 import higor.mybooks.domain.user.User;
 import higor.mybooks.domain.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;

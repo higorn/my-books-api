@@ -2,13 +2,13 @@ package higor.mybooks.api.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import higor.mybooks.domain.exception.DuplicatedEntryException;
-import higor.mybooks.domain.user.User;
-import higor.mybooks.api.dto.BookDto;
 import higor.mybooks.application.config.TestConfig;
+import higor.mybooks.api.dto.BookDto;
 import higor.mybooks.application.facade.BookFacade;
 import higor.mybooks.application.facade.UserFacade;
 import higor.mybooks.application.utils.StubJwt;
+import higor.mybooks.domain.exception.DuplicatedEntryException;
+import higor.mybooks.domain.user.User;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,17 +44,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class BookControllerTest {
 
   @Autowired
-  private MockMvc      mockMvc;
+  private MockMvc    mockMvc;
   @Autowired
   private ObjectMapper mapper;
   @Autowired
-  private JwtDecoder   jwtDecoder;
+  private JwtDecoder jwtDecoder;
   @MockBean
   private BookFacade facade;
   @MockBean
-  private UserFacade   userFacade;
-  private User         stubUser;
-  private StubJwt      stubJwt;
+  private UserFacade userFacade;
+  private User stubUser;
+  private StubJwt stubJwt;
 
   @BeforeEach
   void setUp() throws ParseException {
@@ -183,7 +183,7 @@ class BookControllerTest {
   }
 
   private String getContent() throws JsonProcessingException {
-    BookDto bookDto = new BookDto().createBookDto();
+    BookDto bookDto = new BookDto();
     bookDto.title = "teste";
     bookDto.author = "Nicanor";
     return mapper.writeValueAsString(bookDto);

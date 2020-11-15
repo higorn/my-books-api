@@ -1,10 +1,10 @@
 package higor.mybooks.it.listbooks;
 
+import higor.mybooks.api.dto.BookDto;
+import higor.mybooks.application.facade.BookFacade;
 import higor.mybooks.domain.book.Book;
 import higor.mybooks.domain.book.BookRepository;
 import higor.mybooks.domain.userbook.UserBookRepository;
-import higor.mybooks.api.dto.BookDto;
-import higor.mybooks.application.facade.BookFacade;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
@@ -28,7 +28,7 @@ public class ListBooksSteps {
   private BookRepository     bookRepository;
   @Autowired
   private UserBookRepository userBookRepository;
-  private Page<BookDto>      booksPage;
+  private Page<BookDto> booksPage;
 
   @Before
   public void setUp() {
