@@ -183,9 +183,6 @@ class BookControllerTest {
   }
 
   private String getContent() throws JsonProcessingException {
-    BookDto bookDto = new BookDto().createBookDto();
-    bookDto.title = "teste";
-    bookDto.author = "Nicanor";
-    return mapper.writeValueAsString(bookDto);
+    return mapper.writeValueAsString(new BookDto().title("teste").author("Nicanor"));
   }
 }
