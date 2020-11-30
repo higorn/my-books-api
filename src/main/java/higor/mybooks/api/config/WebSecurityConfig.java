@@ -1,4 +1,4 @@
-package higor.mybooks.application.config;
+package higor.mybooks.api.config;
 
 import higor.mybooks.application.security.JwtGroupsAuthenticationConverter;
 import org.springframework.context.annotation.Configuration;
@@ -28,4 +28,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
           .oauth2ResourceServer().jwt()
           .jwtAuthenticationConverter(new JwtGroupsAuthenticationConverter());
   }
+
 }

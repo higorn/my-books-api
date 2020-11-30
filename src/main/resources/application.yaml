@@ -18,6 +18,13 @@ spring:
           jwk-set-uri: https://dev-2762279.okta.com/oauth2/default/v1/keys
 #          issuer-uri: https://accounts.google.com
 #          jwk-set-uri: https://www.googleapis.com/oauth2/v3/certs
+security:
+  oauth2:
+    client:
+      client-id: nicanor
+      client-secret: 1234
+      access-token-uri: http://localhost:8081/oauth/token
+      grant-type: client_credentials
 
 logging:
   level:
@@ -32,3 +39,10 @@ springdoc:
 #      client-id: 635953397895-hkpkmjro2hrtp3as1k396vi44oqc9kll.apps.googleusercontent.com
       client-id: 0oahn9znOxaAtBDZk5d5
       use-pkce-with-authorization-code-grant: true
+
+
+books:
+  ribbon:
+    eureka:
+      enabled: false
+    listOfServers: http://localhost:8081

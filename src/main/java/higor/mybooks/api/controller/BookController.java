@@ -39,6 +39,7 @@ public class BookController {
       @ApiResponse(responseCode = "500", ref = "#/components/responses/500")
   })
   @SecurityRequirements // Shows as public resource in the api-doc. Does not require authentication
+  @CrossOrigin(origins = "*")
   @GetMapping("/books")
   public Page<BookDto> list(@RequestParam(name = "filter", required = false) String filter,
       @RequestParam(value = "page", required = false, defaultValue = "0") int page,
