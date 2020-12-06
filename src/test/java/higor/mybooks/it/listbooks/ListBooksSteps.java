@@ -5,7 +5,6 @@ import higor.mybooks.application.facade.BookFacade;
 import higor.mybooks.domain.book.Book;
 import higor.mybooks.domain.book.BookClient;
 import higor.mybooks.domain.user.User;
-import higor.mybooks.domain.userbook.UserBookRepository;
 import higor.mybooks.infra.remotedata.BookRemoteRepository;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
@@ -84,8 +83,6 @@ public class ListBooksSteps {
   private BookFacade         bookFacade;
   @Autowired
   private BookClient         bookClient;
-  @MockBean
-  private UserBookRepository userBookRepository;
   @MockBean
   private JwtDecoder         jwtDecoder;
   private Page<BookDto>      booksPage;
