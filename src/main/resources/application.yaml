@@ -6,10 +6,7 @@ spring:
     url: jdbc:postgresql://localhost:5432/my-books
     username: my-books
     password: secret
-  jpa:
-    open-in-view: false
-  liquibase:
-    change-log: classpath:/db/changelog/changelog-master.xml
+
   security:
     oauth2:
       resourceserver:
@@ -40,8 +37,12 @@ springdoc:
       client-id: 0oahn9znOxaAtBDZk5d5
       use-pkce-with-authorization-code-grant: true
 
-
 books:
+  ribbon:
+    eureka:
+      enabled: false
+    listOfServers: http://localhost:8081
+user-books:
   ribbon:
     eureka:
       enabled: false

@@ -4,8 +4,6 @@ import higor.mybooks.api.dto.BookDto;
 import higor.mybooks.domain.book.Book;
 import higor.mybooks.domain.book.BookRepository;
 import higor.mybooks.domain.user.User;
-import higor.mybooks.domain.userbook.UserBook;
-import higor.mybooks.domain.userbook.UserBookRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,7 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static higor.mybooks.application.mapper.BookMapper.toBook;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -29,31 +28,27 @@ class BookFacadeTest {
 
   @Mock
   private BookRepository     bookRepository;
-  @Mock
-  private UserBookRepository userBookRepository;
 
-  private BookFacade facade;
+  private BookFacade bookFacade;
 
   @BeforeEach
   void setUp() {
-    facade = new BookFacade(bookRepository, userBookRepository);
+    bookFacade = new BookFacade(bookRepository);
   }
 
   @Test
-  void givenNoFilter_whenList_thenReturnAPageOfBooks() {
+  void givenNoFilter_thenReturnAPageOfBooks() {
     List<Book> books = new ArrayList<>();
     books.add(new Book().id(1).title("Effective Java").subtitle("Programming Language Guide")
         .author("Joshua Bloch").publishingCompaty("Addison-Wesley").pages(252));
     books.add(new Book().id(2).title("Effective Java2").subtitle("Programming Language Guide2")
         .author("Joshua Bloch2").publishingCompaty("Addison-Wesley2").pages(152));
-    when(bookRepository.findByTitleContainingIgnoreCaseOrSubtitleContainingIgnoreCaseOrAuthorContainingIgnoreCaseOrPublishingCompanyContainingIgnoreCase(
-        any(), any(), any(), any(), any(Pageable.class))).thenReturn(new PageImpl<>(books));
+    when(bookRepository.findByTerm(any(), any(Pageable.class))).thenReturn(new PageImpl<>(books));
 
-    Page<BookDto> booksPage = facade.list(null, 0, 10, Sort.Direction.ASC, "title");
+    Page<BookDto> booksPage = bookFacade.search(null, 0, 10, Sort.Direction.ASC, "title");
 
     assertBooks(books, booksPage);
-    verify(bookRepository).findByTitleContainingIgnoreCaseOrSubtitleContainingIgnoreCaseOrAuthorContainingIgnoreCaseOrPublishingCompanyContainingIgnoreCase(
-        any(), any(), any(), any(), any(Pageable.class));
+    verify(bookRepository).findByTerm(any(), any(Pageable.class));
   }
 
   @Test
@@ -76,16 +71,14 @@ class BookFacadeTest {
         .author("Joshua Bloch").publishingCompany("Addison-Wesley").pages(252).read(read);
     doAnswer(invocation -> getExpectedBook(expectedBookId, bookDto, invocation.getArgument(0, Book.class)))
         .when(bookRepository).save(any(Book.class));
-    doAnswer(invocation -> getExpectedUserBook(invocation.getArgument(0, UserBook.class), read))
-        .when(userBookRepository).save(any(UserBook.class));
 
     // When
-    long bookId = facade.create(bookDto, new User());
+    long bookId = bookFacade.create(bookDto, new User().id(1));
 
     // Then
     assertEquals(expectedBookId, bookId);
     verify(bookRepository).save(any(Book.class));
-    verify(userBookRepository).save(any(UserBook.class));
+    verify(bookRepository).updateBookUser(any(Integer.class), any(Integer.class));
   }
 
   private void assertBooks(List<Book> books, Page<BookDto> booksPage) {
@@ -101,14 +94,6 @@ class BookFacadeTest {
       assertEquals(book.getPublishingCompany(), bookDto.publishingCompany);
       assertEquals(book.getPages(), bookDto.pages);
     }
-  }
-
-  private UserBook getExpectedUserBook(UserBook userBook, boolean read) {
-    assertNull(userBook.getId());
-    assertNotNull(userBook.getUser());
-    assertNotNull(userBook.getBook());
-    assertEquals(read, userBook.isRead());
-    return userBook;
   }
 
   private Book getExpectedBook(int i, BookDto bookDto, Book b) {

@@ -22,11 +22,11 @@ import java.net.URISyntaxException;
 @Tag(name = "Books", description = "Books operations")
 public class BookController {
 
-  private final BookFacade facade;
+  private final BookFacade bookFacade;
   private final UserFacade userFacade;
 
-  public BookController(BookFacade facade, UserFacade userFacade) {
-    this.facade = facade;
+  public BookController(BookFacade bookFacade, UserFacade userFacade) {
+    this.bookFacade = bookFacade;
     this.userFacade = userFacade;
   }
 
@@ -41,12 +41,12 @@ public class BookController {
   @SecurityRequirements // Shows as public resource in the api-doc. Does not require authentication
   @CrossOrigin(origins = "*")
   @GetMapping("/books")
-  public Page<BookDto> list(@RequestParam(name = "filter", required = false) String filter,
+  public Page<BookDto> searchBooks(@RequestParam(name = "term", required = false) String term,
       @RequestParam(value = "page", required = false, defaultValue = "0") int page,
       @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
       @RequestParam(value = "direction", required = false, defaultValue = "ASC") Sort.Direction direction,
       @RequestParam(value = "sortBy", required = false, defaultValue = "title") String sortBy) {
-    return facade.list(filter, page, pageSize, direction, sortBy);
+    return bookFacade.search(term, page, pageSize, direction, sortBy);
   }
 
   @Operation(summary = "Create a books", tags = "Books")
@@ -61,7 +61,7 @@ public class BookController {
   @PostMapping("/books")
   public ResponseEntity<Void> create(@RequestBody BookDto book) throws URISyntaxException {
     return ResponseEntity.created(new URI("http://localhost/v1/books/"
-        + facade.create(book, userFacade.getUser().get()))).build();
+        + bookFacade.create(book, userFacade.getUser().get()))).build();
   }
 
   // TODO: get book detail

@@ -89,7 +89,7 @@ class BookControllerTest {
   @Test
   void givenThatThereAreNoBooks_whenListBooks_thenReturnEmptyList() throws Exception {
     Page<BookDto> books = new PageImpl<>(new ArrayList<>());
-    when(facade.list(any(), anyInt(), anyInt(), any(), any())).thenReturn(books);
+    when(facade.search(any(), anyInt(), anyInt(), any(), any())).thenReturn(books);
 
     mockMvc.perform(get("/v1/books"))
         .andDo(print())
@@ -97,12 +97,12 @@ class BookControllerTest {
         .andExpect(jsonPath("$").isNotEmpty())
         .andExpect(jsonPath("$.content", hasSize(0)));
 
-    verify(facade).list(any(), anyInt(), anyInt(), any(), any());
+    verify(facade).search(any(), anyInt(), anyInt(), any(), any());
   }
 
   @Test
   void whenListOfBooksWithInvalidParams_thenReturnBadRequestStatus() throws Exception {
-    when(facade.list(any(), anyInt(), anyInt(), any(), any())).thenThrow(IllegalArgumentException.class);
+    when(facade.search(any(), anyInt(), anyInt(), any(), any())).thenThrow(IllegalArgumentException.class);
 
     mockMvc.perform(get("/v1/books"))
         .andDo(print())
@@ -111,7 +111,7 @@ class BookControllerTest {
         .andExpect(jsonPath("$.status", is("BAD_REQUEST")))
         .andExpect(jsonPath("$.timestamp").isNotEmpty());
 
-    verify(facade).list(any(), anyInt(), anyInt(), any(), any());
+    verify(facade).search(any(), anyInt(), anyInt(), any(), any());
   }
 
   @Test
@@ -157,7 +157,7 @@ class BookControllerTest {
   }
 
   @Test
-  void givenABook_whenIsValid_thenCreate_andReturnsCreatedStatus_andReturnsTheLocationHeader() throws Exception {
+  void givenABook_whenCreate_andIsValid_thenReturnsCreatedStatus_andReturnsTheLocationHeader() throws Exception {
     doAnswer(invocation -> {
       User u = invocation.getArgument(1, User.class);
       assertEquals(stubUser.getId(), u.getId());

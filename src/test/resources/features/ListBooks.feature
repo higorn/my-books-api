@@ -17,12 +17,6 @@ Feature: List books
       | abcds sfasd                              | asfs                                          | JAVA jsjsjs        | bbbb               |
       | abcds sfasd                              | asfs                                          | jsjsjs             | bbbb jAVaccc       |
 
-  Scenario: User asks for the book list with no filter
-    When I asks for the book list with filter ""
+  Scenario: User asks for the book list
+    When I ask for the book list
     Then I receive a list of books of size 10
-    When I asks for the book list with filter "null"
-    Then I receive a list of books of size 10
-
-  Scenario: User asks for the book list with a filter
-    When I asks for the book list with filter "java"
-    Then I receive a list of books of size 6

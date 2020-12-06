@@ -20,7 +20,6 @@ dependencies {
     implementation 'org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.1.8.RELEASE'
     implementation 'org.springdoc:springdoc-openapi-ui:1.4.8'
     implementation 'higor:my-books-domain:0.0.1-SNAPSHOT'
-    implementation 'org.liquibase:liquibase-core'
 	implementation 'org.postgresql:postgresql'
     runtimeOnly 'org.springframework.boot:spring-boot-devtools'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
