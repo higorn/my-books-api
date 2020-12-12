@@ -4,6 +4,8 @@ import higor.mybooks.api.dto.BookDto;
 import higor.mybooks.domain.book.Book;
 import higor.mybooks.domain.book.BookRepository;
 import higor.mybooks.domain.user.User;
+import higor.mybooks.domain.userbook.UserBook;
+import higor.mybooks.domain.userbook.UserBookRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,12 +30,14 @@ class BookFacadeTest {
 
   @Mock
   private BookRepository     bookRepository;
+  @Mock
+  private UserBookRepository userBookRepository;
 
   private BookFacade bookFacade;
 
   @BeforeEach
   void setUp() {
-    bookFacade = new BookFacade(bookRepository);
+    bookFacade = new BookFacade(bookRepository, userBookRepository);
   }
 
   @Test
@@ -78,7 +82,7 @@ class BookFacadeTest {
     // Then
     assertEquals(expectedBookId, bookId);
     verify(bookRepository).save(any(Book.class));
-    verify(bookRepository).updateBookUser(any(Integer.class), any(Integer.class));
+    verify(userBookRepository).save(any(UserBook.class));
   }
 
   private void assertBooks(List<Book> books, Page<BookDto> booksPage) {
