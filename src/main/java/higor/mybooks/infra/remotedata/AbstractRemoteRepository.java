@@ -1,7 +1,6 @@
 package higor.mybooks.infra.remotedata;
 
 import higor.mybooks.domain.BaseEntity;
-import higor.mybooks.domain.RemoteRepositoryClient;
 import org.springframework.data.domain.*;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
@@ -11,10 +10,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public abstract class AbstractRemoteRepository<T extends BaseEntity<T, ID>, ID> {
-  private final RemoteRepositoryClient<T> remoteRepository;
+  private final DataRestClient<T> dataRestClient;
 
-  protected AbstractRemoteRepository(RemoteRepositoryClient<T> remoteRepository) {
-    this.remoteRepository = remoteRepository;
+  protected AbstractRemoteRepository(DataRestClient<T> dataRestClient) {
+    this.dataRestClient = dataRestClient;
   }
 
   public List<T> findAll() {
@@ -54,7 +53,7 @@ public abstract class AbstractRemoteRepository<T extends BaseEntity<T, ID>, ID> 
   }
 
   public <S extends T> S save(S entity) {
-    return (S) toEntity(remoteRepository.create(entity));
+    return (S) toEntity(dataRestClient.create(entity));
   }
 
   protected Page<T> toEntityPage(PagedModel<EntityModel<T>> pagedEntityModel, Sort sort) {

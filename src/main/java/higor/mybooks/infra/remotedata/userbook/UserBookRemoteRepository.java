@@ -1,8 +1,8 @@
-package higor.mybooks.infra.remotedata;
+package higor.mybooks.infra.remotedata.userbook;
 
 import higor.mybooks.domain.userbook.UserBook;
-import higor.mybooks.domain.userbook.UserBookClient;
 import higor.mybooks.domain.userbook.UserBookRepository;
+import higor.mybooks.infra.remotedata.AbstractRemoteRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;

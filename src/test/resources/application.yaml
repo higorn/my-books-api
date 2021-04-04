@@ -17,8 +17,13 @@ logging:
   level:
     liquibase: INFO
 
-#books:
-#  ribbon:
-#    eureka:
-#      enabled: false
-#    listOfServers: http://localhost:8081
+books:
+  ribbon:
+    eureka:
+      enabled: false
+    listOfServers: http://localhost:9561
+user-books:
+  ribbon:
+    eureka:
+      enabled: false
+    listOfServers: http://localhost:9561

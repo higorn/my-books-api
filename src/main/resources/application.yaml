@@ -1,7 +1,22 @@
 server:
   servlet:
     context-path: /
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
 spring:
+  boot:
+    admin:
+      client:
+        url: http://localhost:8082
+
   datasource:
     url: jdbc:postgresql://localhost:5432/my-books
     username: my-books

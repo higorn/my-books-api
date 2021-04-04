@@ -10,6 +10,8 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 @ConditionalOnProperty(prefix = "security.oauth2.client", value = "grant-type", havingValue = "client_credentials")
 public class Oauth2RestTemplateConfigurer {
+//  @Value("${clientSecret}")
+  private String clientSecret;
 
   @Bean
   public RestTemplate oauth2RestTemplate(OAuth2ProtectedResourceDetails details) {

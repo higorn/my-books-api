@@ -1,0 +1,23 @@
+spring:
+  cloud:
+    vault:
+      uri: https://localhost:8200
+      connection-timeout: 5000
+      read-timeout: 15000
+      authentication: cert
+      ssl:
+        key-store: classpath:keystore.jks
+        key-store-password: changeit
+        trust-store: classpath:keystore.jks
+        trust-store-password: changeit
+        cert-auth-path: cert
+#      kv:
+#        enabled: true
+#        backend: secret
+#        application-name: mybooks
+
+      generic:
+        enabled: true
+        application-name: mybooks
+#      token: s.yJMNUCNa1Lfuaw9DYTOI7AsE
+#      scheme: https
