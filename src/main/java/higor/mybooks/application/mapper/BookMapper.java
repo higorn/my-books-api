@@ -1,7 +1,7 @@
 package higor.mybooks.application.mapper;
 
-import higor.mybooks.domain.book.Book;
 import higor.mybooks.api.dto.BookDto;
+import higor.mybooks.domain.book.Book;
 
 public class BookMapper {
   private BookMapper() {

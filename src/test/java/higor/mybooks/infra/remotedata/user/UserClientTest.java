@@ -30,10 +30,6 @@ class UserClientTest {
   @MockBean
   private JwtDecoder     jwtDecoder;
 
-//  void teardown() {
-//    wireMockServer.stu
-//  }
-
   @Test
   void givenAnEmail_whenTheAccountExists_thenReturnsNotEmptyUserOptional() {
     String email = "nicanor@mybooks.com";
