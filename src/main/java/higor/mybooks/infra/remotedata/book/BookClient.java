@@ -1,6 +1,7 @@
 package higor.mybooks.infra.remotedata.book;
 
 import higor.mybooks.domain.book.Book;
+import higor.mybooks.domain.page.Page;
 import higor.mybooks.domain.page.PageRequest;
 import higor.mybooks.domain.user.User;
 import higor.mybooks.infra.remotedata.DataRestClient;
@@ -18,6 +19,9 @@ public interface BookClient extends DataRestClient<Book> {
 
   @GetMapping(path = "/search/by-term")
   PagedModel<EntityModel<Book>> findByTerm(@RequestParam("term") String term, PageRequest page);
+
+  @GetMapping(path = "/search/by-term")
+  Page<Book> findByTerm2(@RequestParam("term") String term, PageRequest page);
 
   @GetMapping(path = "/{id}/users")
   PagedModel<EntityModel<User>> findBookUsers(@PathVariable("id") int id);

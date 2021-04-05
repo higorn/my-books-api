@@ -25,7 +25,7 @@ public class BookRemoteRepository extends AbstractRemoteRepository<Book, Integer
 
   @Override
   public Page<Book> findByTerm(String term, PageRequest pageRequest) {
-    return toEntityPage(bookClient.findByTerm(term, pageRequest), pageRequest);
+    return toEntityPage(bookClient.findByTerm(term, pageRequest));
   }
 
   @Override

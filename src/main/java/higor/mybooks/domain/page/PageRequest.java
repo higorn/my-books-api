@@ -29,10 +29,6 @@ public class PageRequest {
     return new PageRequest(page, size, pageRequest.sort);
   }
 
-  public static PageRequest unpaged() {
-    return new PageRequest(0, 0, "");
-  }
-
   @Override
   public String toString() {
     return String.format("Page request [number: %d, size %d, sort: %s]", page, size, sort);

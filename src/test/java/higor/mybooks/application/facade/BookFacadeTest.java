@@ -88,7 +88,7 @@ class BookFacadeTest {
     assertEquals(books.size(), booksPage.getTotalElements());
     for (int i = 0; i < books.size(); i++) {
       Book book = books.get(i);
-      BookDto bookDto = booksPage.getContent().get(i);
+      BookDto bookDto = booksPage.getContent().iterator().next();
       assertEquals(book.getId(), bookDto.id);
       assertEquals(book.getTitle(), bookDto.title);
       assertEquals(book.getSubtitle(), bookDto.subtitle);
@@ -103,7 +103,7 @@ class BookFacadeTest {
     assertEquals(books.size(), booksPage.getTotalElements());
     for (int i = 0; i < books.size(); i++) {
       Book book = books.get(i);
-      BookDto bookDto = booksPage.getContent().get(i);
+      BookDto bookDto = booksPage.getContent().iterator().next();
       assertEquals(book.getId(), bookDto.id);
       assertEquals(book.getTitle(), bookDto.title);
       assertEquals(book.getSubtitle(), bookDto.subtitle);

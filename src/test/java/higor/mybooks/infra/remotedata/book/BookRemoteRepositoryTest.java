@@ -77,7 +77,7 @@ class BookRemoteRepositoryTest {
     assertEquals(expectedBooks.size(), booksPage.getTotalElements());
     for (int i = 0; i < expectedBooks.size(); i++) {
       Book expectedBook = expectedBooks.get(i).getContent();
-      Book book = booksPage.getContent().get(i);
+      Book book = booksPage.getContent().iterator().next();
       assertBook(expectedBook, book);
     }
   }

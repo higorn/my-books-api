@@ -37,44 +37,36 @@ class PageTest {
 
       @Test
       void thenReturnsTheFirstPage() {
-        PageRequest pageRequest = PageRequest.of(0, pageSize, "");
-
         Page<String> page = Page.of(elemens.stream()
             .filter(e -> e.equals("1") || e.equals("2"))
-            .collect(Collectors.toList()), pageRequest, elemens.size());
+            .collect(Collectors.toList()), Page.Metadata.of(0, pageSize, elemens.size()));
 
         assertPage(page, 0, 0, 2, true, false);
       }
 
       @Test
       void thenReturnsTheSecondPage() {
-        PageRequest pageRequest = PageRequest.of(1, pageSize, "");
-
         Page<String> page = Page.of(elemens.stream()
             .filter(e -> e.equals("3") || e.equals("4"))
-            .collect(Collectors.toList()), pageRequest, elemens.size());
+            .collect(Collectors.toList()), Page.Metadata.of(1, pageSize, elemens.size()));
 
         assertPage(page, 1, 2, 2, false, false);
       }
 
       @Test
       void thenReturnsTheThirdPage() {
-        PageRequest pageRequest = PageRequest.of(2, pageSize, "");
-
         Page<String> page = Page.of(elemens.stream()
             .filter(e -> e.equals("5") || e.equals("6"))
-            .collect(Collectors.toList()), pageRequest, elemens.size());
+            .collect(Collectors.toList()), Page.Metadata.of(2, pageSize, elemens.size()));
 
         assertPage(page, 2, 4, 2, false, false);
       }
 
       @Test
       void thenReturnsTheFourthdPage() {
-        PageRequest pageRequest = PageRequest.of(3, pageSize, "");
-
         Page<String> page = Page.of(elemens.stream()
             .filter(e -> e.equals("7"))
-            .collect(Collectors.toList()), pageRequest, elemens.size());
+            .collect(Collectors.toList()), Page.Metadata.of(3, pageSize, elemens.size()));
 
         assertPage(page, 3, 6, 1, false, true);
       }
@@ -98,11 +90,9 @@ class PageTest {
 
       @Test
       void thenReturnsAConvertedContentPage() {
-        PageRequest pageRequest = PageRequest.of(0, 3, "");
-
         Page<String> page = Page.of(elemens.stream()
             .filter(e -> e.equals("1") || e.equals("2") || e.equals("3"))
-            .collect(Collectors.toList()), pageRequest, elemens.size());
+            .collect(Collectors.toList()), Page.Metadata.of(0, 3, elemens.size()));
         Page<Integer> convertedPage = page.map(Integer::parseInt);
 
         assertEquals(6, convertedPage.getContent().stream().reduce(0, Integer::sum));

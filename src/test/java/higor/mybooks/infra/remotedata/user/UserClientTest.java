@@ -2,6 +2,7 @@ package higor.mybooks.infra.remotedata.user;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import feign.FeignException;
+import feign.RequestInterceptor;
 import higor.mybooks.TestConstatns;
 import higor.mybooks.domain.user.User;
 import higor.mybooks.it.WireMockConfig;
@@ -19,7 +20,7 @@ import java.util.Optional;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
+@SpringBootTest()
 @ContextConfiguration(classes = { WireMockConfig.class })
 class UserClientTest {
 
@@ -27,6 +28,8 @@ class UserClientTest {
   private UserClient     userClient;
   @Autowired
   private WireMockServer wireMockServer;
+  @MockBean
+  private RequestInterceptor requestInterceptor;
   @MockBean
   private JwtDecoder     jwtDecoder;
 

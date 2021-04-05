@@ -57,11 +57,11 @@ public abstract class AbstractRemoteRepository<T extends BaseEntity<T, ID>, ID> 
     return (S) toEntity(dataRestClient.create(entity));
   }
 
-  protected Page<T> toEntityPage(PagedModel<EntityModel<T>> pagedEntityModel, PageRequest pageRequest1) {
+  protected Page<T> toEntityPage(PagedModel<EntityModel<T>> pagedEntityModel) {
     PagedModel.PageMetadata metadata = pagedEntityModel.getMetadata();
-    PageRequest pageRequest = PageRequest.of(pageRequest1, (int) metadata.getNumber(), (int) metadata.getSize());
     List<T> entityList = pagedEntityModel.getContent().stream().map(this::toEntity).collect(Collectors.toList());
-    return Page.of(entityList, pageRequest, metadata.getTotalElements());
+    return Page.of(entityList, Page.Metadata.of((int)metadata.getNumber(), (int)metadata.getSize(),
+        metadata.getTotalElements()));
   }
 
   protected T toEntity(EntityModel<T> entityModel) {
