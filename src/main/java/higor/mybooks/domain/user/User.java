@@ -1,13 +1,8 @@
 package higor.mybooks.domain.user;
 
-import javax.persistence.*;
+import higor.mybooks.domain.BaseEntity;
 
-@Entity
-@Table(name = "account")
-public class User {
-  @Id
-  @SequenceGenerator(name = "User_SEQ", sequenceName = "account_seq", allocationSize = 1)
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "User_SEQ")
+public class User implements BaseEntity<User, Integer> {
   private Integer id;
   private String name;
   private String surname;

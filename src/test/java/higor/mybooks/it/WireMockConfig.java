@@ -6,9 +6,12 @@ import org.springframework.context.annotation.Bean;
 
 @TestConfiguration
 public class WireMockConfig {
+  private static WireMockServer wireMockServer;
 
   @Bean(initMethod = "start", destroyMethod = "stop")
   public WireMockServer wireMockServer() {
-    return new WireMockServer(9561);
+    if (wireMockServer != null)
+      return wireMockServer;
+    return wireMockServer = new WireMockServer(9561);
   }
 }

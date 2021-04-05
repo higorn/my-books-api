@@ -2,18 +2,13 @@ package higor.mybooks.infra.remotedata.book;
 
 import higor.mybooks.domain.book.Book;
 import higor.mybooks.domain.book.BookRepository;
-import higor.mybooks.domain.book.BookRepository2;
-import higor.mybooks.domain.page.MyPage;
-import higor.mybooks.domain.page.MyPageRequest;
+import higor.mybooks.domain.page.Page;
+import higor.mybooks.domain.page.PageRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.PagedModel;
@@ -33,12 +28,10 @@ class BookRemoteRepositoryTest {
   @Mock
   private BookClient      bookClient;
   private BookRepository  bookRepository;
-  private BookRepository2 bookRepository2;
 
   @BeforeEach
   void setUp() {
     bookRepository = new BookRemoteRepository(bookClient);
-    bookRepository2 = new BookRemoteRepository2(bookClient);
   }
 
   @Test
@@ -50,31 +43,13 @@ class BookRemoteRepositoryTest {
     books.add(EntityModel.of(new Book().id(2).title("Effective Java2").subtitle("Programming Language Guide2")
         .author("Joshua Bloch2").publisher("Addison-Wesley2").pages(152),
         Link.of("http://localhost/v1/books/2", "self")));
-    when(bookClient.findByTerm(any(), any(Pageable.class)))
+    when(bookClient.findByTerm(any(), any(PageRequest.class)))
         .thenReturn(PagedModel.of(books, new PagedModel.PageMetadata(10, 0, books.size())));
 
-    Page<Book> booksPage = bookRepository.findByTerm(null, PageRequest.of(0, 10, Sort.Direction.ASC, "title"));
+    Page<Book> booksPage = bookRepository.findByTerm(null, PageRequest.of(0, 10, "title", PageRequest.SortDirection.ASC));
 
     assertBooks(books, booksPage);
-    verify(bookClient).findByTerm(any(), any(Pageable.class));
-  }
-
-  @Test
-  void whenFindByTerm_thenReturnsAPageOfBooks2() {
-    List<EntityModel<Book>> books = new ArrayList<>();
-    books.add(EntityModel.of(new Book().id(1).title("Effective Java").subtitle("Programming Language Guide")
-            .author("Joshua Bloch").publisher("Addison-Wesley").pages(252),
-        Link.of("http://localhost/v1/books/1", "self")));
-    books.add(EntityModel.of(new Book().id(2).title("Effective Java2").subtitle("Programming Language Guide2")
-            .author("Joshua Bloch2").publisher("Addison-Wesley2").pages(152),
-        Link.of("http://localhost/v1/books/2", "self")));
-    when(bookClient.findByTerm(any(), any(Pageable.class)))
-        .thenReturn(PagedModel.of(books, new PagedModel.PageMetadata(10, 0, books.size())));
-
-    MyPage<Book> booksPage = bookRepository2.findByTerm(null, MyPageRequest.of(0, 10, MyPageRequest.SortDirection.ASC, "title"));
-
-    assertBooks2(books, booksPage);
-    verify(bookClient).findByTerm(any(), any(Pageable.class));
+    verify(bookClient).findByTerm(any(), any(PageRequest.class));
   }
 
   @Test
@@ -98,16 +73,6 @@ class BookRemoteRepositoryTest {
   }
 
   private void assertBooks(List<EntityModel<Book>> expectedBooks, Page<Book> booksPage) {
-    assertNotNull(booksPage);
-    assertEquals(expectedBooks.size(), booksPage.getTotalElements());
-    for (int i = 0; i < expectedBooks.size(); i++) {
-      Book expectedBook = expectedBooks.get(i).getContent();
-      Book book = booksPage.getContent().get(i);
-      assertBook(expectedBook, book);
-    }
-  }
-
-  private void assertBooks2(List<EntityModel<Book>> expectedBooks, MyPage<Book> booksPage) {
     assertNotNull(booksPage);
     assertEquals(expectedBooks.size(), booksPage.getTotalElements());
     for (int i = 0; i < expectedBooks.size(); i++) {

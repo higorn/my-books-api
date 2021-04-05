@@ -1,13 +1,12 @@
 package higor.mybooks.api.controller;
 
 import higor.mybooks.api.dto.UserDto;
+import higor.mybooks.domain.page.Page;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,7 +31,7 @@ public class AdminController {
   @PreAuthorize("hasAuthority('Admin')")
   @GetMapping("/users")
   public Page<UserDto> list(@RequestParam(name = "filter", required = false) String filter) {
-    Page<UserDto> users = new PageImpl<>(new ArrayList<>());
+    Page<UserDto> users = Page.of(new ArrayList<>());
     return users;
   }
 }

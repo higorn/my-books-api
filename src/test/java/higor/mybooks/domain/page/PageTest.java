@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class MyPageTest {
+class PageTest {
 
   @Nested
   @DisplayName("given a list of seven elements")
@@ -37,9 +37,9 @@ class MyPageTest {
 
       @Test
       void thenReturnsTheFirstPage() {
-        MyPageRequest pageRequest = MyPageRequest.of(0, pageSize, MyPageRequest.SortDirection.ASC, (String) null);
+        PageRequest pageRequest = PageRequest.of(0, pageSize, "");
 
-        MyPage<String> page = MyPage.of(elemens.stream()
+        Page<String> page = Page.of(elemens.stream()
             .filter(e -> e.equals("1") || e.equals("2"))
             .collect(Collectors.toList()), pageRequest, elemens.size());
 
@@ -48,9 +48,9 @@ class MyPageTest {
 
       @Test
       void thenReturnsTheSecondPage() {
-        MyPageRequest pageRequest = MyPageRequest.of(1, pageSize, MyPageRequest.SortDirection.ASC, (String) null);
+        PageRequest pageRequest = PageRequest.of(1, pageSize, "");
 
-        MyPage<String> page = MyPage.of(elemens.stream()
+        Page<String> page = Page.of(elemens.stream()
             .filter(e -> e.equals("3") || e.equals("4"))
             .collect(Collectors.toList()), pageRequest, elemens.size());
 
@@ -59,9 +59,9 @@ class MyPageTest {
 
       @Test
       void thenReturnsTheThirdPage() {
-        MyPageRequest pageRequest = MyPageRequest.of(2, pageSize, MyPageRequest.SortDirection.ASC, (String) null);
+        PageRequest pageRequest = PageRequest.of(2, pageSize, "");
 
-        MyPage<String> page = MyPage.of(elemens.stream()
+        Page<String> page = Page.of(elemens.stream()
             .filter(e -> e.equals("5") || e.equals("6"))
             .collect(Collectors.toList()), pageRequest, elemens.size());
 
@@ -70,16 +70,16 @@ class MyPageTest {
 
       @Test
       void thenReturnsTheFourthdPage() {
-        MyPageRequest pageRequest = MyPageRequest.of(3, pageSize, MyPageRequest.SortDirection.ASC, (String) null);
+        PageRequest pageRequest = PageRequest.of(3, pageSize, "");
 
-        MyPage<String> page = MyPage.of(elemens.stream()
+        Page<String> page = Page.of(elemens.stream()
             .filter(e -> e.equals("7"))
             .collect(Collectors.toList()), pageRequest, elemens.size());
 
         assertPage(page, 3, 6, 1, false, true);
       }
 
-      private void assertPage(MyPage<String> page, int pageNumber, long offset, int contentSize, boolean isFirst,
+      private void assertPage(Page<String> page, int pageNumber, long offset, int contentSize, boolean isFirst,
           boolean isLast) {
         assertEquals(pageNumber, page.getPageNumber());
         assertEquals(2, page.getPageSize());
@@ -98,12 +98,12 @@ class MyPageTest {
 
       @Test
       void thenReturnsAConvertedContentPage() {
-        MyPageRequest pageRequest = MyPageRequest.of(0, 3, MyPageRequest.SortDirection.ASC, (String) null);
+        PageRequest pageRequest = PageRequest.of(0, 3, "");
 
-        MyPage<String> page = MyPage.of(elemens.stream()
+        Page<String> page = Page.of(elemens.stream()
             .filter(e -> e.equals("1") || e.equals("2") || e.equals("3"))
             .collect(Collectors.toList()), pageRequest, elemens.size());
-        MyPage<Integer> convertedPage = page.map(Integer::parseInt);
+        Page<Integer> convertedPage = page.map(Integer::parseInt);
 
         assertEquals(6, convertedPage.getContent().stream().reduce(0, Integer::sum));
         assertEquals(0, convertedPage.getPageNumber());

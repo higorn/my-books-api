@@ -216,4 +216,21 @@ public class TestConstatns {
       + "      \"number\":0\n"
       + "   }\n"
       + "}";
+
+  public static final String EXPECTED_USER_BY_EMAIL = "{\n"
+      + "  \"name\": null,\n"
+      + "  \"surname\": null,\n"
+      + "  \"email\": \"nicanor@mybooks.com\",\n"
+      + "  \"_links\": {\n"
+      + "    \"self\": {\n"
+      + "      \"href\": \"http://localhost:8081/v1/users/3\"\n"
+      + "    },\n"
+      + "    \"user\": {\n"
+      + "      \"href\": \"http://localhost:8081/v1/users/3\"\n"
+      + "    },\n"
+      + "    \"books\": {\n"
+      + "      \"href\": \"http://localhost:8081/v1/users/3/books\"\n"
+      + "    }\n"
+      + "  }\n"
+      + "}";
 }

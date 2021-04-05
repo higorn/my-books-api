@@ -52,12 +52,17 @@ springdoc:
       client-id: 0oahn9znOxaAtBDZk5d5
       use-pkce-with-authorization-code-grant: true
 
-books:
+books-service:
   ribbon:
     eureka:
       enabled: false
     listOfServers: http://localhost:8081
-user-books:
+users-service:
+  ribbon:
+    eureka:
+      enabled: false
+    listOfServers: http://localhost:8081
+user-books-services:
   ribbon:
     eureka:
       enabled: false

@@ -2,13 +2,14 @@ package higor.mybooks.api.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import higor.mybooks.domain.exception.DuplicatedEntryException;
-import higor.mybooks.domain.user.User;
 import higor.mybooks.api.dto.BookDto;
 import higor.mybooks.application.config.TestConfig;
 import higor.mybooks.application.facade.BookFacade;
 import higor.mybooks.application.facade.UserFacade;
 import higor.mybooks.application.utils.StubJwt;
+import higor.mybooks.domain.exception.DuplicatedEntryException;
+import higor.mybooks.domain.page.Page;
+import higor.mybooks.domain.user.User;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,8 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.convert.ConversionFailedException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.ContextConfiguration;
@@ -88,7 +87,7 @@ class BookControllerTest {
 
   @Test
   void givenThatThereAreNoBooks_whenListBooks_thenReturnEmptyList() throws Exception {
-    Page<BookDto> books = new PageImpl<>(new ArrayList<>());
+    Page<BookDto> books = Page.of(new ArrayList<>());
     when(facade.search(any(), anyInt(), anyInt(), any(), any())).thenReturn(books);
 
     mockMvc.perform(get("/v1/books"))

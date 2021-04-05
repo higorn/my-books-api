@@ -1,12 +1,12 @@
 package higor.mybooks.domain.book;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import higor.mybooks.domain.page.Page;
+import higor.mybooks.domain.page.PageRequest;
 
 public interface BookRepository {
   Page<Book> findByTitleContainingIgnoreCaseOrSubtitleContainingIgnoreCaseOrAuthorContainingIgnoreCaseOrPublishingCompanyContainingIgnoreCase(
-      String title, String subtitle, String author, String publishingCompany, Pageable pageable);
-  Page<Book> findByTerm(String term, Pageable pageable);
+      String title, String subtitle, String author, String publishingCompany, PageRequest pageRequest);
+  Page<Book> findByTerm(String term, PageRequest pageRequest);
 
   <S extends Book> S save(S entity);
   void updateBookUser(Integer bookId, Integer userId);

@@ -1,9 +1,9 @@
 package higor.mybooks.domain.userbook;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import higor.mybooks.domain.page.Page;
+import higor.mybooks.domain.page.PageRequest;
 
 public interface UserBookRepository {
-  Page<UserBook> findByUserId(Integer userId, Pageable pageable);
+  Page<UserBook> findByUserId(Integer userId, PageRequest pageRequest);
   <S extends UserBook> S save(S entity);
 }

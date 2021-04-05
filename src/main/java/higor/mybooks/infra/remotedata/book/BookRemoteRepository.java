@@ -2,9 +2,9 @@ package higor.mybooks.infra.remotedata.book;
 
 import higor.mybooks.domain.book.Book;
 import higor.mybooks.domain.book.BookRepository;
+import higor.mybooks.domain.page.Page;
+import higor.mybooks.domain.page.PageRequest;
 import higor.mybooks.infra.remotedata.AbstractRemoteRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 
@@ -19,13 +19,13 @@ public class BookRemoteRepository extends AbstractRemoteRepository<Book, Integer
 
   @Override
   public Page<Book> findByTitleContainingIgnoreCaseOrSubtitleContainingIgnoreCaseOrAuthorContainingIgnoreCaseOrPublishingCompanyContainingIgnoreCase(
-      String title, String subtitle, String author, String publishingCompany, Pageable pageable) {
+      String title, String subtitle, String author, String publishingCompany, PageRequest pageRequest) {
     return null;
   }
 
   @Override
-  public Page<Book> findByTerm(String term, Pageable pageable) {
-    return toEntityPage(bookClient.findByTerm(term, pageable), pageable.getSort());
+  public Page<Book> findByTerm(String term, PageRequest pageRequest) {
+    return toEntityPage(bookClient.findByTerm(term, pageRequest), pageRequest);
   }
 
   @Override

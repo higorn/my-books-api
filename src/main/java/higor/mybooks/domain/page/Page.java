@@ -7,27 +7,27 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class MyPage<T> implements /*Iterable<T>, Supplier<Stream<T>>,*/ Serializable {
-  private final List<T> content = new ArrayList<>();
-  private final MyPageRequest pageRequest;
-  private final long total;
+public class Page<T> implements /*Iterable<T>, Supplier<Stream<T>>,*/ Serializable {
+  private final List<T>     content = new ArrayList<>();
+  private final PageRequest pageRequest;
+  private final long        total;
 
-  private MyPage(List<T> content, MyPageRequest pageRequest, long total) {
+  private Page(List<T> content, PageRequest pageRequest, long total) {
     this.content.addAll(content);
     this.pageRequest = pageRequest;
     this.total = total;
   }
 
-  private MyPage(List<T> content) {
-    this(content, MyPageRequest.unpaged(), null == content ? 0 : content.size());
+  private Page(List<T> content) {
+    this(content, PageRequest.unpaged(), null == content ? 0 : content.size());
   }
 
-  public static <U> MyPage<U> of(List<U> content) {
-    return new MyPage<>(content);
+  public static <U> Page<U> of(List<U> content) {
+    return new Page<>(content);
   }
 
-  public static <U> MyPage<U> of(List<U> content, MyPageRequest pageRequest, long total) {
-    return new MyPage<>(content, pageRequest, total);
+  public static <U> Page<U> of(List<U> content, PageRequest pageRequest, long total) {
+    return new Page<>(content, pageRequest, total);
   }
 
   public int getPageNumber() {
@@ -66,8 +66,8 @@ public class MyPage<T> implements /*Iterable<T>, Supplier<Stream<T>>,*/ Serializ
     return Collections.unmodifiableList(content);
   }
 
-  public <U> MyPage<U> map(Function<? super T, ? extends U> converter) {
-    return new MyPage<>(getConvertedContent(converter), pageRequest, total);
+  public <U> Page<U> map(Function<? super T, ? extends U> converter) {
+    return new Page<>(getConvertedContent(converter), pageRequest, total);
   }
 
   private <U> List<U> getConvertedContent(Function<? super T, ? extends U> converter) {

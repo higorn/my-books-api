@@ -31,10 +31,10 @@ public class FeignClientConfig {
   }
 
   @Bean
-  @ConditionalOnClass(name = "higor.mybooks.domain.page.MyPageRequest")
+  @ConditionalOnClass(name = "higor.mybooks.domain.page.PageRequest")
   @ConditionalOnMissingBean
   public Encoder feignEncoderPageable(ObjectProvider<AbstractFormWriter> formWriterProvider) {
-    return new MyPageRequestEncoder(springEncoder(formWriterProvider));
+    return new PageRequestEncoder(springEncoder(formWriterProvider));
   }
 
   private Encoder springEncoder(ObjectProvider<AbstractFormWriter> formWriterProvider) {

@@ -3,9 +3,8 @@ package higor.mybooks.application.facade;
 import higor.mybooks.api.dto.BookDto;
 import higor.mybooks.domain.book.Book;
 import higor.mybooks.domain.book.BookRepository;
-import higor.mybooks.domain.book.BookRepository2;
-import higor.mybooks.domain.page.MyPage;
-import higor.mybooks.domain.page.MyPageRequest;
+import higor.mybooks.domain.page.Page;
+import higor.mybooks.domain.page.PageRequest;
 import higor.mybooks.domain.user.User;
 import higor.mybooks.domain.userbook.UserBook;
 import higor.mybooks.domain.userbook.UserBookRepository;
@@ -14,10 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,15 +29,13 @@ class BookFacadeTest {
   @Mock
   private BookRepository     bookRepository;
   @Mock
-  private BookRepository2    bookRepository2;
-  @Mock
   private UserBookRepository userBookRepository;
 
   private BookFacade bookFacade;
 
   @BeforeEach
   void setUp() {
-    bookFacade = new BookFacade(bookRepository, bookRepository2, userBookRepository);
+    bookFacade = new BookFacade(bookRepository, userBookRepository);
   }
 
   @Test
@@ -52,27 +45,12 @@ class BookFacadeTest {
         .author("Joshua Bloch").publisher("Addison-Wesley").pages(252));
     books.add(new Book().id(2).title("Effective Java2").subtitle("Programming Language Guide2")
         .author("Joshua Bloch2").publisher("Addison-Wesley2").pages(152));
-    when(bookRepository.findByTerm(any(), any(Pageable.class))).thenReturn(new PageImpl<>(books));
+    when(bookRepository.findByTerm(any(), any(PageRequest.class))).thenReturn(Page.of(books));
 
-    Page<BookDto> booksPage = bookFacade.search(null, 0, 10, Sort.Direction.ASC, "title");
+    Page<BookDto> booksPage = bookFacade.search(null, 0, 10, "title", PageRequest.SortDirection.ASC);
 
     assertBooks(books, booksPage);
-    verify(bookRepository).findByTerm(any(), any(Pageable.class));
-  }
-
-  @Test
-  void givenNoFilter_thenReturnAPageOfBooks2() {
-    List<Book> books = new ArrayList<>();
-    books.add(new Book().id(1).title("Effective Java").subtitle("Programming Language Guide")
-        .author("Joshua Bloch").publisher("Addison-Wesley").pages(252));
-    books.add(new Book().id(2).title("Effective Java2").subtitle("Programming Language Guide2")
-        .author("Joshua Bloch2").publisher("Addison-Wesley2").pages(152));
-    when(bookRepository2.findByTerm(any(), any(MyPageRequest.class))).thenReturn(MyPage.of(books));
-
-    MyPage<BookDto> booksPage = bookFacade.search2(null, 0, 10, "title", MyPageRequest.SortDirection.ASC);
-
-    assertBooks2(books, booksPage);
-    verify(bookRepository2).findByTerm(any(), any(MyPageRequest.class));
+    verify(bookRepository).findByTerm(any(), any(PageRequest.class));
   }
 
   @Test
@@ -120,7 +98,7 @@ class BookFacadeTest {
     }
   }
 
-  private void assertBooks2(List<Book> books, MyPage<BookDto> booksPage) {
+  private void assertBooks2(List<Book> books, Page<BookDto> booksPage) {
     assertNotNull(booksPage);
     assertEquals(books.size(), booksPage.getTotalElements());
     for (int i = 0; i < books.size(); i++) {

@@ -1,7 +1,8 @@
 package higor.mybooks.infra.remotedata;
 
 import higor.mybooks.domain.BaseEntity;
-import org.springframework.data.domain.*;
+import higor.mybooks.domain.page.Page;
+import higor.mybooks.domain.page.PageRequest;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 
@@ -20,11 +21,11 @@ public abstract class AbstractRemoteRepository<T extends BaseEntity<T, ID>, ID> 
     return null;
   }
 
-  public List<T> findAll(Sort sort) {
+  public List<T> findAll(String sort) {
     return null;
   }
 
-  public Page<T> findAll(Pageable pageable) {
+  public Page<T> findAll(PageRequest pageRequest) {
     return null;
   }
 
@@ -56,11 +57,11 @@ public abstract class AbstractRemoteRepository<T extends BaseEntity<T, ID>, ID> 
     return (S) toEntity(dataRestClient.create(entity));
   }
 
-  protected Page<T> toEntityPage(PagedModel<EntityModel<T>> pagedEntityModel, Sort sort) {
+  protected Page<T> toEntityPage(PagedModel<EntityModel<T>> pagedEntityModel, PageRequest pageRequest1) {
     PagedModel.PageMetadata metadata = pagedEntityModel.getMetadata();
-    PageRequest pageRequest = PageRequest.of((int) metadata.getNumber(), (int) metadata.getSize(), sort);
+    PageRequest pageRequest = PageRequest.of(pageRequest1, (int) metadata.getNumber(), (int) metadata.getSize());
     List<T> entityList = pagedEntityModel.getContent().stream().map(this::toEntity).collect(Collectors.toList());
-    return new PageImpl<>(entityList, pageRequest, metadata.getTotalElements());
+    return Page.of(entityList, pageRequest, metadata.getTotalElements());
   }
 
   protected T toEntity(EntityModel<T> entityModel) {
@@ -99,29 +100,5 @@ public abstract class AbstractRemoteRepository<T extends BaseEntity<T, ID>, ID> 
 
   public T getOne(ID id) {
     return null;
-  }
-
-  public <S extends T> Optional<S> findOne(Example<S> example) {
-    return Optional.empty();
-  }
-
-  public <S extends T> List<S> findAll(Example<S> example) {
-    return null;
-  }
-
-  public <S extends T> List<S> findAll(Example<S> example, Sort sort) {
-    return null;
-  }
-
-  public <S extends T> Page<S> findAll(Example<S> example, Pageable pageable) {
-    return null;
-  }
-
-  public <S extends T> long count(Example<S> example) {
-    return 0;
-  }
-
-  public <S extends T> boolean exists(Example<S> example) {
-    return false;
   }
 }
