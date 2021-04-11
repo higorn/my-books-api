@@ -2,7 +2,7 @@ package higor.mybooks.domain.user;
 
 import higor.mybooks.domain.BaseEntity;
 
-public class User implements BaseEntity<User, Integer> {
+public class User implements BaseEntity<Integer> {
   private Integer id;
   private String name;
   private String surname;

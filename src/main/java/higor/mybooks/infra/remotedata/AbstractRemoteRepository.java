@@ -3,14 +3,11 @@ package higor.mybooks.infra.remotedata;
 import higor.mybooks.domain.BaseEntity;
 import higor.mybooks.domain.page.Page;
 import higor.mybooks.domain.page.PageRequest;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.PagedModel;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-public abstract class AbstractRemoteRepository<T extends BaseEntity<T, ID>, ID> {
+public abstract class AbstractRemoteRepository<T extends BaseEntity<ID>, ID> {
   private final DataRestClient<T> dataRestClient;
 
   protected AbstractRemoteRepository(DataRestClient<T> dataRestClient) {
@@ -54,20 +51,7 @@ public abstract class AbstractRemoteRepository<T extends BaseEntity<T, ID>, ID> 
   }
 
   public <S extends T> S save(S entity) {
-    return (S) toEntity(dataRestClient.create(entity));
-  }
-
-  protected Page<T> toEntityPage(PagedModel<EntityModel<T>> pagedEntityModel) {
-    PagedModel.PageMetadata metadata = pagedEntityModel.getMetadata();
-    List<T> entityList = pagedEntityModel.getContent().stream().map(this::toEntity).collect(Collectors.toList());
-    return Page.of(entityList, Page.Metadata.of((int)metadata.getNumber(), (int)metadata.getSize(),
-        metadata.getTotalElements()));
-  }
-
-  protected T toEntity(EntityModel<T> entityModel) {
-    String href = entityModel.getLink("self").get().getHref();
-    Integer id = Integer.valueOf(href.substring(href.lastIndexOf("/") + 1));
-    return entityModel.getContent().id((ID) id);
+    return (S) dataRestClient.create(entity);
   }
 
   public <S extends T> List<S> saveAll(Iterable<S> entities) {

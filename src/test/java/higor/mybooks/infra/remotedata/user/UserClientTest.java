@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.ContextConfiguration;
@@ -66,8 +65,7 @@ class UserClientTest {
             .withHeader("Content-Type", "application/hal+json")
             .withBody(TestConstatns.EXPECTED_USER_BY_EMAIL)));
 
-    EntityModel<User> userEntityModel = userClient.create(user);
-    assertTrue(userEntityModel.getLink("self").isPresent());
-    assertEquals("http://localhost:8081/v1/users/3", userEntityModel.getLink("self").get().getHref());
+    User savedUser = userClient.create(user);
+    assertEquals(1, savedUser.getId());
   }
 }

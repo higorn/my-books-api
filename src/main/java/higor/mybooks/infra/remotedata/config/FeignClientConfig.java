@@ -37,7 +37,7 @@ public class FeignClientConfig {
   @Bean
   @ConditionalOnMissingBean
   public Decoder feignDecoder() {
-    return new OptionalDecoder(new ResponseEntityDecoder(new PageDecoder(new SpringDecoder(this.messageConverters))));
+    return new OptionalDecoder(new ResponseEntityDecoder(new BaseEntityDecoder(new PageDecoder(new SpringDecoder(this.messageConverters)))));
   }
 
   @Bean

@@ -16,6 +16,13 @@ spring:
     admin:
       client:
         url: http://localhost:8082
+        username: admin
+        password: admin
+        instance:
+          metadata:
+            user:
+              name: client
+              password: client
 
   datasource:
     url: jdbc:postgresql://localhost:5432/my-books

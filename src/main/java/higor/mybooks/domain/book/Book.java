@@ -4,7 +4,7 @@ import higor.mybooks.domain.BaseEntity;
 
 import java.time.LocalDate;
 
-public class Book implements BaseEntity<Book, Integer> {
+public class Book implements BaseEntity<Integer> {
   private Integer   id;
   private String    title;
   private String    subtitle;

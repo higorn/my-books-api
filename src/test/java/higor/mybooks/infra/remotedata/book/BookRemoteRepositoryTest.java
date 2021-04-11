@@ -9,11 +9,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.Link;
-import org.springframework.hateoas.PagedModel;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,15 +34,13 @@ class BookRemoteRepositoryTest {
 
   @Test
   void whenFindByTerm_thenReturnsAPageOfBooks() {
-    List<EntityModel<Book>> books = new ArrayList<>();
-    books.add(EntityModel.of(new Book().id(1).title("Effective Java").subtitle("Programming Language Guide")
-        .author("Joshua Bloch").publisher("Addison-Wesley").pages(252),
-        Link.of("http://localhost/v1/books/1", "self")));
-    books.add(EntityModel.of(new Book().id(2).title("Effective Java2").subtitle("Programming Language Guide2")
-        .author("Joshua Bloch2").publisher("Addison-Wesley2").pages(152),
-        Link.of("http://localhost/v1/books/2", "self")));
+    List<Book> books = new ArrayList<>();
+    books.add(new Book().id(1).title("Effective Java").subtitle("Programming Language Guide")
+        .author("Joshua Bloch").publisher("Addison-Wesley").pages(252));
+    books.add(new Book().id(2).title("Effective Java2").subtitle("Programming Language Guide2")
+        .author("Joshua Bloch2").publisher("Addison-Wesley2").pages(152));
     when(bookClient.findByTerm(any(), any(PageRequest.class)))
-        .thenReturn(PagedModel.of(books, new PagedModel.PageMetadata(10, 0, books.size())));
+        .thenReturn(Page.of(books, Page.Metadata.of(0, 10, books.size())));
 
     Page<Book> booksPage = bookRepository.findByTerm(null, PageRequest.of(0, 10, "title", PageRequest.SortDirection.ASC));
 
@@ -56,7 +52,7 @@ class BookRemoteRepositoryTest {
   void whenSave_thenReturnsTheNewCreatedBook() {
     Book book = new Book().id(1).title("Effective Java").subtitle("Programming Language Guide").author("Joshua Bloch")
         .publisher("Addison-Wesley").pages(252);
-    when(bookClient.create(book)).thenReturn(EntityModel.of(book, Link.of("http://localhost/v1/books/1", "self")));
+    when(bookClient.create(book)).thenReturn(book);
 
     Book bookSaved = bookRepository.save(book);
 
@@ -72,14 +68,13 @@ class BookRemoteRepositoryTest {
     verify(bookClient).updateBookUsers(1, "/v1/users/3");
   }
 
-  private void assertBooks(List<EntityModel<Book>> expectedBooks, Page<Book> booksPage) {
+  private void assertBooks(List<Book> expectedBooks, Page<Book> booksPage) {
     assertNotNull(booksPage);
     assertEquals(expectedBooks.size(), booksPage.getTotalElements());
-    for (int i = 0; i < expectedBooks.size(); i++) {
-      Book expectedBook = expectedBooks.get(i).getContent();
-      Book book = booksPage.getContent().iterator().next();
-      assertBook(expectedBook, book);
-    }
+    Iterator<Book> it1 = expectedBooks.iterator();
+    Iterator<Book> it2 = booksPage.getContent().iterator();
+    for (Book b1 = it1.next(), b2 = it2.next(); it1.hasNext() && it2.hasNext(); b1 = it1.next(), it2.next())
+      assertBook(b1, b2);
   }
 
   private void assertBook(Book expectedBook, Book book) {

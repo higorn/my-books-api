@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import static higor.mybooks.application.mapper.BookMapper.toBook;
@@ -45,7 +46,8 @@ class BookFacadeTest {
         .author("Joshua Bloch").publisher("Addison-Wesley").pages(252));
     books.add(new Book().id(2).title("Effective Java2").subtitle("Programming Language Guide2")
         .author("Joshua Bloch2").publisher("Addison-Wesley2").pages(152));
-    when(bookRepository.findByTerm(any(), any(PageRequest.class))).thenReturn(Page.of(books));
+    when(bookRepository.findByTerm(any(), any(PageRequest.class)))
+        .thenReturn(Page.of(books, Page.Metadata.of(0, 10, books.size())));
 
     Page<BookDto> booksPage = bookFacade.search(null, 0, 10, "title", PageRequest.SortDirection.ASC);
 
@@ -86,24 +88,10 @@ class BookFacadeTest {
   private void assertBooks(List<Book> books, Page<BookDto> booksPage) {
     assertNotNull(booksPage);
     assertEquals(books.size(), booksPage.getTotalElements());
+    Iterator<BookDto> it = booksPage.getContent().iterator();
     for (int i = 0; i < books.size(); i++) {
       Book book = books.get(i);
-      BookDto bookDto = booksPage.getContent().iterator().next();
-      assertEquals(book.getId(), bookDto.id);
-      assertEquals(book.getTitle(), bookDto.title);
-      assertEquals(book.getSubtitle(), bookDto.subtitle);
-      assertEquals(book.getAuthor(), bookDto.author);
-      assertEquals(book.getPublisher(), bookDto.publishingCompany);
-      assertEquals(book.getPages(), bookDto.pages);
-    }
-  }
-
-  private void assertBooks2(List<Book> books, Page<BookDto> booksPage) {
-    assertNotNull(booksPage);
-    assertEquals(books.size(), booksPage.getTotalElements());
-    for (int i = 0; i < books.size(); i++) {
-      Book book = books.get(i);
-      BookDto bookDto = booksPage.getContent().iterator().next();
+      BookDto bookDto = it.next();
       assertEquals(book.getId(), bookDto.id);
       assertEquals(book.getTitle(), bookDto.title);
       assertEquals(book.getSubtitle(), bookDto.subtitle);

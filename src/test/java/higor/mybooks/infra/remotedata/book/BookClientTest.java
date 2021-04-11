@@ -34,14 +34,29 @@ class BookClientTest {
 
   @Test
   void givenATerm_thenReturnsAllBooksContainingThatTerm() {
-    wireMockServer.stubFor(get(urlMatching("/v1/books/search/by-term.*")).willReturn(
-        aResponse().withStatus(HttpStatus.OK.value()).withHeader("Content-Type", "application/hal+json")
+    wireMockServer.stubFor(get(urlMatching("/v1/books/search/by-term.*"))
+        .willReturn(aResponse()
+            .withStatus(HttpStatus.OK.value())
+            .withHeader("Content-Type", "application/hal+json")
             .withBody(TestConstatns.EXPECTED_BOOKS_PAGE)));
 
-    Page<Book> page = bookClient.findByTerm2("", PageRequest.of(0, 8, "title"));
+    Page<Book> page = bookClient.findByTerm("", PageRequest.of(0, 8, "title"));
     assertNotNull(page);
     assertEquals("Design Patterns com Java", page.getContent().iterator().next().getTitle());
-//    PagedModel<EntityModel<Book>> pagedModel = bookClient.findByTerm("", PageRequest.of(0, 8, "title"));
-//    assertEquals(8, pagedModel.getContent().size());
+  }
+
+  @Test
+  void givenABook_thenSaveTheBook() {
+    wireMockServer.stubFor(post(urlEqualTo("/v1/books/"))
+        .willReturn(aResponse()
+            .withStatus(HttpStatus.CREATED.value())
+            .withHeader("Content-Type", "application/hal+json")
+            .withBody(TestConstatns.EXPECTED_BOOK_CREATED)));
+
+    Book book = new Book().id(1).title("Effective Java").subtitle("Programming Language Guide")
+        .author("Joshua Bloch").publisher("Addison-Wesley").pages(252);
+    Book savedBook = bookClient.create(book);
+    assertNotNull(savedBook);
+    assertEquals(book.getId(), savedBook.getId());
   }
 }

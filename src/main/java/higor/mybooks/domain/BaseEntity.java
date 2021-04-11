@@ -1,7 +1,6 @@
 package higor.mybooks.domain;
 
-public interface BaseEntity<T, ID> {
+public interface BaseEntity<ID> {
   ID getId();
   void setId(ID id);
-  T id(ID id);
 }

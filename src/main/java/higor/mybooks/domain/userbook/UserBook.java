@@ -2,7 +2,7 @@ package higor.mybooks.domain.userbook;
 
 import higor.mybooks.domain.BaseEntity;
 
-public class UserBook implements BaseEntity<UserBook, Integer> {
+public class UserBook implements BaseEntity<Integer> {
   private Integer id;
   public String user;
   public String book;
@@ -42,7 +42,6 @@ public class UserBook implements BaseEntity<UserBook, Integer> {
     this.read = read;
   }
 
-  @Override
   public UserBook id(Integer id) {
     this.id = id;
     return this;
